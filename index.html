@@ -3,184 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pink Leaf | Master Archive</title>
+    <title>Pink Leaf | Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #fdfdfd; --text: #1a1a1a; --pink: #d4a5b2; --mellow-pink: rgba(212, 165, 178, 0.4); --border: rgba(212, 165, 178, 0.3); --glow: 0 0 50px 15px rgba(212, 165, 178, 0.5); }
-        body.dark-mode { --bg: #0a0a0a; --text: #e5e5e5; --mellow-pink: rgba(212, 165, 178, 0.25); --border: rgba(212, 165, 178, 0.2); --glow: 0 0 65px 20px rgba(212, 165, 178, 0.35); }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background 0.6s ease; margin: 0; overflow-x: hidden; }
+        :root { --bg: #0a0a0a; --text: #e5e5e5; --pink: #d4a5b2; --border: rgba(212, 165, 178, 0.2); }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
         .serif { font-family: 'Cinzel', serif; }
-        
-        /* Fixed Disability Sidebar */
-        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(212, 165, 178, 0.15); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 40px; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
-        .acc-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); font-size: 18px; }
-        
-        .top-ruler { position: fixed; top: 0; left: 0; right: 0; padding: 12px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 10px; background: var(--bg); z-index: 3000; }
-        .logo-container { text-align: center; padding-top: 90px; padding-bottom: 20px; }
-        .main-logo { width: 280px; margin: 0 auto; cursor: pointer; }
-
-        /* Store Carousel */
-        .carousel-container { perspective: 2000px; height: 500px; display: flex; align-items: center; justify-content: center; position: relative; margin-top: 20px; }
-        .carousel-wheel { position: relative; width: 300px; height: 450px; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
-        .store-card { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 40px; background: var(--bg); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 25px; opacity: 0.1; filter: blur(4px); }
-        .card-focus { opacity: 1 !important; filter: blur(0px) !important; border: 1.5px solid var(--pink) !important; box-shadow: var(--glow); }
-        
-        .portal { border-radius: 50%; overflow: hidden; aspect-ratio: 1/1; border: 2px solid var(--mellow-pink); width: 160px; margin-bottom: 20px; }
-        .stat-row { display: flex; justify-content: space-between; width: 100%; font-size: 9px; letter-spacing: 1px; opacity: 0.7; border-bottom: 1px solid var(--border); padding: 5px 0; }
-        .btn { width: 100%; border: 1.5px solid var(--pink); padding: 12px; font-size: 10px; border-radius: 50px; cursor: pointer; background: transparent; color: var(--pink); font-weight: 700; transition: 0.3s; text-transform: uppercase; }
+        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(212, 165, 178, 0.1); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 40px; padding: 15px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
+        .acc-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: #1a1a1a; font-size: 18px; }
+        .nav-link { font-size: 11px; letter-spacing: 2px; opacity: 0.5; cursor: pointer; transition: 0.3s; }
+        .nav-active { opacity: 1; border-bottom: 1px solid var(--pink); }
+        .carousel-container { perspective: 2000px; height: 450px; display: flex; align-items: center; justify-content: center; position: relative; margin-top: 20px; }
+        .carousel-wheel { position: relative; width: 280px; height: 400px; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
+        .store-card { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 40px; background: #111; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 25px; opacity: 0.1; filter: blur(4px); transition: 0.5s; }
+        .card-focus { opacity: 1 !important; filter: blur(0px) !important; border: 1px solid var(--pink) !important; box-shadow: 0 0 40px rgba(212, 165, 178, 0.2); }
+        .portal { border-radius: 50%; overflow: hidden; aspect-ratio: 1/1; border: 2px solid var(--pink); width: 150px; margin-bottom: 15px; }
+        .stat-row { display: flex; justify-content: space-between; width: 100%; font-size: 9px; opacity: 0.6; border-bottom: 1px solid var(--border); padding: 5px 0; }
+        .btn { width: 100%; border: 1px solid var(--pink); padding: 10px; font-size: 10px; border-radius: 50px; cursor: pointer; background: transparent; color: var(--pink); transition: 0.3s; text-transform: uppercase; }
         .btn:hover { background: var(--pink); color: white; }
-
+        #lab-feedback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 100px; z-index: 50; opacity: 0; pointer-events: none; transition: 0.2s; }
+        #lab-correction { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .contact-table { width: 100%; margin-top: 30px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+        .contact-table td { padding: 20px; border: 1px solid var(--border); text-align: center; font-size: 14px; }
         .hidden { display: none !important; }
-
-        /* The "First Version" Lab Logic Icons */
-        #lab-feedback { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 120px; z-index: 1000; pointer-events: none; opacity: 0; transition: 0.3s; 
-        }
-        #lab-correction { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="dark-mode">
-
-    <div class="top-ruler">
-        <div class="serif text-pink-300">PINK LEAF // COLLECTION</div>
-        <div id="xp-counter" class="font-bold text-[10px] tracking-widest">XP: 0</div>
-    </div>
-
     <div class="acc-panel">
-        <div class="acc-btn" title="Accessibility">♿</div>
-        <button class="acc-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+        <div class="acc-btn">♿</div>
         <button class="acc-btn" onclick="adjFont(1)">A+</button>
         <button class="acc-btn" onclick="adjFont(-1)">A-</button>
         <button class="acc-btn" onclick="toggleLang()">🌐</button>
     </div>
-
-    <div class="logo-container"><img id="main-logo" src="logo-light.png" class="main-logo" onclick="showPage('intro')"></div>
-    
-    <nav class="flex justify-center gap-8 mb-10">
-        <button class="nav-link nav-active" onclick="showPage('intro', this)" data-he="בית" data-en="HOME">בית</button>
-        <button class="nav-link" onclick="showPage('store', this)" data-he="חנות" data-en="STORE">חנות</button>
-        <button class="nav-link" onclick="showPage('vault', this)" data-he="ארכיון" data-en="VAULT">ארכיון</button>
-        <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
-    </nav>
-
-    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
-        <div class="p-12 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)] backdrop-blur-md">
-            <div id="intro-content" class="text-[14px] leading-relaxed"></div>
-            <button class="btn max-w-[180px] mx-auto mt-8" onclick="window.open('https://wa.me/972559116990')">INQUIRE</button>
+    <div class="text-center py-10">
+        <img src="logo-light.png" class="w-64 mx-auto mb-6 cursor-pointer" onclick="showPage('intro')">
+        <nav class="flex justify-center gap-8">
+            <button class="nav-link nav-active" onclick="showPage('intro', this)">HOME</button>
+            <button class="nav-link" onclick="showPage('store', this)">STORE</button>
+            <button class="nav-link" onclick="showPage('vault', this)">VAULT</button>
+            <button class="nav-link" onclick="showPage('lab', this)">LAB</button>
+        </nav>
+    </div>
+    <main id="page-intro" class="max-w-xl mx-auto p-6">
+        <div class="border border-[var(--border)] rounded-[40px] p-8 text-center bg-white/5">
+            <h2 class="serif text-xl mb-4">PINK LEAF STUDIO</h2>
+            <p id="intro-txt">Rare Botanical Archive. Ramat Gan, Israel.</p>
+            <table class="contact-table">
+                <tr><td>📞 Phone</td><td><a href="tel:+972559116990" class="text-pink-300">055-911-6990</a></td></tr>
+                <tr><td>📸 Instagram</td><td><a href="https://instagram.com/pinkleaf_studio" target="_blank" class="text-pink-300">@pinkleaf_studio</a></td></tr>
+            </table>
         </div>
     </main>
-
-    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-10">
+    <main id="page-store" class="hidden max-w-5xl mx-auto px-10">
         <div id="store-grid"></div>
-        <div class="flex justify-center gap-10 mt-6">
-            <button class="btn w-32" onclick="spin(1)">PREVIOUS</button>
-            <button class="btn w-32" onclick="spin(-1)">NEXT</button>
-        </div>
+        <div class="flex justify-center gap-10 mt-6"><button class="btn w-32" onclick="spin(1)">PREVIOUS</button><button class="btn w-32" onclick="spin(-1)">NEXT</button></div>
     </main>
-
-    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6 text-center">
-        <div id="vault-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
-    </main>
-
-    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative">
-        <div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)] relative">
-            <div id="lab-feedback"></div> <div id="lab-inner"></div>
+    <main id="page-vault" class="hidden max-w-5xl mx-auto p-6"><div id="vault-content"></div></main>
+    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center">
+        <div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-white/5 relative">
+            <div id="xp-display" class="absolute top-4 right-6 text-[10px] font-bold text-pink-300">XP: 0</div>
+            <div id="lab-inner"></div>
         </div>
         <div id="lab-correction">
-            <h2 class="serif text-red-500 text-xl mb-4">INCORRECT</h2>
-            <div class="portal mx-auto w-48 h-48"><img id="correct-img" class="w-full h-full object-cover"></div>
-            <p id="correct-name" class="serif text-lg my-6 uppercase tracking-widest"></p>
-            <button class="btn w-48" onclick="closeCorrection()">TRY AGAIN</button>
+            <h2 class="serif text-red-500 text-xl mb-6">INCORRECT</h2>
+            <div class="portal mx-auto"><img id="correct-img" class="w-full h-full object-cover"></div>
+            <p id="correct-name" class="serif text-lg mb-8 uppercase"></p>
+            <button class="btn w-48" onclick="closeCorrection()">Try Again</button>
         </div>
     </main>
-
     <script>
-        const DB = {"PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV22":"Alocasia Black Velvet pink Var","PV36":"Alocasia Yucatanense variegated"};
-        const storeInfo = {
-            "PV22": { name: "Black Velvet Pink", light: "65%", hum: "80%", diff: "Hard" },
-            "PV19": { name: "Polly Pink Var", light: "70%", hum: "85%", diff: "Expert" },
-            "PV20": { name: "Bambino Arrow Var", light: "60%", hum: "75%", diff: "Medium" }
-        };
-
-        const intros = {
-            en: `<p>Pink Leaf Studio: Specialty botanical archive based in Ramat Gan, Israel.</p>`,
-            he: `<p>Pink Leaf Studio: ארכיון בוטני נדיר. ממוקמים ברמת גן.</p>`
-        };
-
-        let lang='he', rot=0, xp=parseInt(localStorage.getItem('pl_xp'))||0, streak=0;
-
-        function showPage(p, el){
+        const DB = {"PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV22":"Alocasia Black Velvet pink Var","PV36":"Alocasia Yucatanense variegated","M01":"Monstera Thai Constellation","P01":"Philodendron Pink Princess"};
+        const vaultFamilies = {"ALOCASIA":["PV19","PV20","PV22","PV36"],"MONSTERA":["M01"],"PHILODENDRON":["P01"]};
+        const storeItems = [
+            {id:"PV19",name:"Polly Pink Var",light:"☀️ 70%",hum:"💧 85%",diff:"🌡️ Expert",status:"Available"},
+            {id:"PV22",name:"Black Velvet Pink",light:"☀️ 65%",hum:"💧 80%",diff:"🌡️ Hard",status:"Coming Soon"},
+            {id:"M01",name:"Heart Balloon",light:"☀️ 60%",hum:"💧 75%",diff:"🌡️ Medium",status:"Coming Soon"}
+        ];
+        let lang='en',rot=0,xp=parseInt(localStorage.getItem('pl_xp'))||0,streak=0;
+        function showPage(p,el){
             document.querySelectorAll('main').forEach(m=>m.classList.add('hidden'));
             document.getElementById('page-'+p).classList.remove('hidden');
-            if(el){ document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('nav-active')); el.classList.add('nav-active'); }
-            if(p==='intro') updateIntro();
-            if(p==='store') renderStore();
-            if(p==='lab') startLab();
-            document.getElementById('xp-counter').innerText = `XP: ${xp}`;
+            if(el){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('nav-active')); el.classList.add('nav-active');}
+            if(p==='store')renderStore(); if(p==='vault')renderVault(); if(p==='lab')startLab(); updateXP();
         }
-
-        function updateIntro(){ document.getElementById('intro-content').innerHTML = intros[lang]; }
-
         function renderStore(){
-            const pts = Object.keys(storeInfo); const ang = 360/pts.length;
-            let h = `<div class="carousel-container"><div class="carousel-wheel" id="wheel">`;
-            pts.forEach((id, i) => {
-                const info = storeInfo[id];
-                h += `
-                <div class="store-card ${i===0?'card-focus':''}" style="transform:rotateY(${i*ang}deg) translateZ(350px)">
-                    <div class="portal"><img src="plants/${id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div>
-                    <p class="serif text-[13px] font-bold mb-4 tracking-widest uppercase">${info.name}</p>
+            const ang=360/storeItems.length; let h='<div class="carousel-container"><div class="carousel-wheel" id="wheel">';
+            storeItems.forEach((item,idx)=>{
+                h+=`<div class="store-card ${idx===0?'card-focus':''}" style="transform:rotateY(${idx*ang}deg) translateZ(350px)">
+                    <div class="portal"><img src="plants/${item.id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div>
+                    <p class="serif text-[12px] font-bold mb-4 uppercase">${item.name}</p>
                     <div class="w-full mb-6">
-                        <div class="stat-row"><span>☀️ Light</span><span>${info.light}</span></div>
-                        <div class="stat-row"><span>💧 Humidity</span><span>${info.hum}</span></div>
-                        <div class="stat-row"><span>🌡️ Difficulty</span><span>${info.diff}</span></div>
+                        <div class="stat-row"><span>Light</span><span>${item.light}</span></div>
+                        <div class="stat-row"><span>Humidity</span><span>${item.hum}</span></div>
+                        <div class="stat-row"><span>Difficulty</span><span>${item.diff}</span></div>
                     </div>
-                    <button class="btn" onclick="window.open('https://wa.me/972559116990')">INQUIRE</button>
+                    <button class="btn" onclick="${item.status==='Available'?'window.open(\'https://wa.me/972559116990\')':''}">${item.status}</button>
                 </div>`;
             });
-            document.getElementById('store-grid').innerHTML = h+'</div></div>'; window.sLen=pts.length; window.sAng=ang;
+            document.getElementById('store-grid').innerHTML=h+'</div></div>'; window.sLen=storeItems.length; window.sAng=ang;
         }
-
-        function spin(d){ rot+=d*window.sAng; document.getElementById('wheel').style.transform=`rotateY(${rot}deg)`; const cards=document.querySelectorAll('.store-card'); const act=(Math.round(-rot/window.sAng)%window.sLen+window.sLen)%window.sLen; cards.forEach((c,i)=>c.classList.toggle('card-focus', i===act));}
-
-        function startLab(){
-            const keys=Object.keys(DB); const q=keys[Math.floor(Math.random()*keys.length)];
-            let choices=[DB[q]]; while(choices.length<3){ let r=DB[keys[Math.floor(Math.random()*keys.length)]]; if(!choices.includes(r)) choices.push(r);}
-            choices.sort(()=>Math.random()-0.5);
-            document.getElementById('lab-inner').innerHTML = `
-                <p class="serif text-[10px] opacity-40 mb-4 tracking-widest">STREAK: ${streak}/5</p>
-                <div class="portal mx-auto mb-8 w-48 h-48"><img src="plants/${q}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div>
-                <div class="flex flex-col gap-4">${choices.map(c=>`<button class="btn" onclick="checkLab('${c}','${DB[q]}','${q}')">${c}</button>`).join('')}</div>`;
-        }
-
-        function checkLab(c,a,id){
-            const fb=document.getElementById('lab-feedback');
-            if(c===a){
-                streak++; xp+=10;
-                fb.innerHTML = "✅"; fb.style.color = "#4ade80"; fb.style.opacity = "1";
-                if(streak===5){ confetti(); xp+=100; alert("STREAK BONUS! +100 XP"); streak=0; }
-                setTimeout(()=>{ fb.style.opacity = "0"; startLab(); }, 800);
-            } else {
-                fb.innerHTML = "❌"; fb.style.color = "#f87171"; fb.style.opacity = "1";
-                setTimeout(()=>{ 
-                    fb.style.opacity = "0";
-                    streak=0; 
-                    document.getElementById('correct-img').src=`plants/${id}.jpg`;
-                    document.getElementById('correct-name').innerText=a;
-                    document.getElementById('lab-correction').style.display='flex';
-                }, 800);
+        function spin(d){rot+=d*window.sAng; document.getElementById('wheel').style.transform=`rotateY(${rot}deg)`; const cards=document.querySelectorAll('.store-card'); const act=(Math.round(-rot/window.sAng)%window.sLen+window.sLen)%window.sLen; cards.forEach((c,i)=>c.classList.toggle('card-focus', i===act));}
+        function renderVault(){
+            let h='<h2 class="serif text-center text-xl mb-10 tracking-widest">ARCHIVE</h2>';
+            for(let f in vaultFamilies){
+                h+=`<h3 class="serif text-pink-300 text-left mb-4 mt-8 border-b border-[var(--border)] pb-2">${f}</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-6">`;
+                vaultFamilies[f].forEach(id=>{h+=`<div class="p-4 border border-[var(--border)] rounded-3xl bg-white/5 text-center"><div class="portal w-20 h-20 mb-2 mx-auto"><img src="plants/${id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div><p class="text-[9px] opacity-60 uppercase">${DB[id]}</p></div>`;});
+                h+='</div>';
             }
-            localStorage.setItem('pl_xp', xp); document.getElementById('xp-counter').innerText = `XP: ${xp}`;
+            document.getElementById('vault-content').innerHTML=h;
         }
-
-        function closeCorrection(){ document.getElementById('lab-correction').style.display='none'; startLab(); }
-        function toggleTheme(){ const d=document.body.classList.toggle('dark-mode'); document.getElementById('theme-btn').innerText=d?"🌙":"☀️"; }
-        function adjFont(v){ document.body.style.fontSize=(parseFloat(getComputedStyle(document.body).fontSize)+v)+"px";}
-        function toggleLang(){ lang=lang==='he'?'en':'he'; updateIntro(); }
-        window.onload=()=>{ updateIntro(); showPage('intro'); };
+        function startLab(){
+            const k=Object.keys(DB),q=k[Math.floor(Math.random()*k.length)],a=DB[q];
+            let c=[a]; while(c.length<3){let r=DB[k[Math.floor(Math.random()*k.length)]]; if(!c.includes(r))c.push(r);}
+            c.sort(()=>Math.random()-0.5);
+            document.getElementById('lab-inner').innerHTML=`<div id="lab-feedback"></div><p class="text-[9px] opacity-40 mb-2">STREAK: ${streak}/5</p><div class="portal mx-auto"><img src="plants/${q}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div><div class="flex flex-col gap-3">${c.map(ch=>`<button class="btn" onclick="checkLab('${ch}','${a}','${q}')">${ch}</button>`).join('')}</div>`;
+        }
+        function checkLab(ch,a,id){
+            const fb=document.getElementById('lab-feedback');
+            if(ch===a){
+                streak++; xp+=10; fb.innerHTML="✅"; fb.style.opacity="1"; fb.style.color="#4ade80";
+                if(streak===5){confetti(); alert("STREAK BONUS! +100 XP"); xp+=100; streak=0;}
+                setTimeout(()=>{startLab(); updateXP();},600);
+            } else {
+                fb.innerHTML="❌"; fb.style.opacity="1"; fb.style.color="#f87171";
+                setTimeout(()=>{document.getElementById('correct-img').src=`plants/${id}.jpg`; document.getElementById('correct-name').innerText=a; document.getElementById('lab-correction').style.display='flex'; streak=0; updateXP();},600);
+            }
+        }
+        function closeCorrection(){document.getElementById('lab-correction').style.display='none'; startLab();}
+        function updateXP(){localStorage.setItem('pl_xp',xp); document.getElementById('xp-display').innerText=`XP: ${xp}`;}
+        function adjFont(v){document.body.style.fontSize=(parseFloat(getComputedStyle(document.body).fontSize)+v)+"px";}
+        function toggleLang(){lang=lang==='en'?'he':'en'; document.getElementById('intro-txt').innerText=lang==='en'?'Rare Botanical Archive. Ramat Gan, Israel.':'ארכיון בוטני נדיר. רמת גן, ישראל.';}
+        window.onload=()=>showPage('intro');
     </script>
 </body>
 </html>
