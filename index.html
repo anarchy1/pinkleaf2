@@ -1,10 +1,9 @@
-
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pink Leaf | Master Botanical Archive</title>
+    <title>Pink Leaf | Master Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;500;600&display=swap" rel="stylesheet">
@@ -13,48 +12,175 @@
         body.dark-mode { --bg: #0a0a0a; --text: #e5e5e5; --mellow-pink: rgba(212, 165, 178, 0.25); --border: rgba(212, 165, 178, 0.2); --glow: 0 0 65px 20px rgba(212, 165, 178, 0.35); }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background 0.6s ease; margin: 0; overflow-x: hidden; }
         .serif { font-family: 'Cinzel', serif; }
-        .top-ruler { position: fixed; top: 0; left: 0; right: 0; padding: 12px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 4px; background: var(--bg); z-index: 3000; backdrop-filter: blur(10px); }
+        
+        /* Fixed Disability Sidebar */
+        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(212, 165, 178, 0.15); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 40px; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
+        .acc-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); font-size: 18px; }
+        
+        .top-ruler { position: fixed; top: 0; left: 0; right: 0; padding: 12px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 10px; background: var(--bg); z-index: 3000; }
         .logo-container { text-align: center; padding-top: 90px; padding-bottom: 20px; }
-        .main-logo { width: 65%; max-width: 280px; margin: 0 auto; cursor: pointer; }
-        nav { display: flex; justify-content: center; gap: 35px; margin-bottom: 50px; }
-        .nav-link { cursor: pointer; opacity: 0.3; transition: 0.4s; font-size: 12px; letter-spacing: 3px; font-family: 'Cinzel', serif; background: none; border: none; padding-bottom: 8px; color: var(--text); }
-        .nav-active { opacity: 1; color: var(--pink); border-bottom: 2px solid var(--pink); }
-        .carousel-container { perspective: 2500px; height: 550px; display: flex; align-items: center; justify-content: center; position: relative; margin-top: 20px; }
-        .carousel-wheel { position: relative; width: 320px; height: 460px; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1); }
-        .store-card { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transition: 0.8s ease; border-radius: 40px; background: var(--bg); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 30px; opacity: 0.1; filter: blur(5px); }
-        .card-focus { opacity: 1 !important; filter: blur(0px) !important; border: 1.5px solid var(--pink) !important; z-index: 100; box-shadow: var(--glow); }
-        .portal { border-radius: 50%; overflow: hidden; aspect-ratio: 1/1; border: 2px solid var(--mellow-pink); width: 180px; margin-bottom: 25px; }
-        .side-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; background: none; border: none; }
-        .arrow-shape { width: 30px; height: 30px; border-left: 3px solid var(--pink); border-bottom: 3px solid var(--pink); }
-        .arrow-left { transform: rotate(45deg); }
-        .arrow-right { transform: rotate(-135deg); }
-        .stat-row { display: flex; justify-content: space-between; width: 100%; font-size: 9px; letter-spacing: 1px; opacity: 0.7; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .vault-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 20px; }
-        @media (min-width: 768px) { .vault-grid { grid-template-columns: repeat(5, 1fr); gap: 45px; } }
-        .vault-item { text-align: center; }
-        .vault-name { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 15px; font-weight: 600; line-height: 1.4; }
-        .btn { width: 100%; border: 1.5px solid var(--pink); padding: 14px; font-size: 10px; letter-spacing: 3px; border-radius: 50px; cursor: pointer; background: transparent; color: var(--pink); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .main-logo { width: 280px; margin: 0 auto; cursor: pointer; }
+
+        /* Store Carousel */
+        .carousel-container { perspective: 2000px; height: 500px; display: flex; align-items: center; justify-content: center; position: relative; margin-top: 20px; }
+        .carousel-wheel { position: relative; width: 300px; height: 450px; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
+        .store-card { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 40px; background: var(--bg); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 25px; opacity: 0.1; filter: blur(4px); }
+        .card-focus { opacity: 1 !important; filter: blur(0px) !important; border: 1.5px solid var(--pink) !important; box-shadow: var(--glow); }
+        
+        .portal { border-radius: 50%; overflow: hidden; aspect-ratio: 1/1; border: 2px solid var(--mellow-pink); width: 160px; margin-bottom: 20px; }
+        .stat-row { display: flex; justify-content: space-between; width: 100%; font-size: 9px; letter-spacing: 1px; opacity: 0.7; border-bottom: 1px solid var(--border); padding: 5px 0; }
+        .btn { width: 100%; border: 1.5px solid var(--pink); padding: 12px; font-size: 10px; border-radius: 50px; cursor: pointer; background: transparent; color: var(--pink); font-weight: 700; transition: 0.3s; text-transform: uppercase; }
         .btn:hover { background: var(--pink); color: white; }
-        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 40px; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
-        .acc-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); font-size: 14px; }
-        .hidden { display: none; }
-        #lab-feedback { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 500; pointer-events: none; }
+
+        .hidden { display: none !important; }
+
+        /* The "First Version" Lab Logic Icons */
+        #lab-feedback { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            font-size: 120px; z-index: 1000; pointer-events: none; opacity: 0; transition: 0.3s; 
+        }
+        #lab-correction { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
-<body>
-    <div class="top-ruler"><div class="serif">PINK LEAF // COLLECTION</div><button onclick="toggleLang()" class="font-bold text-[10px] tracking-[3px]">HE / EN</button></div>
-    <div class="acc-panel"><button class="acc-btn" onclick="toggleTheme()" id="theme-btn">☀️</button><button class="acc-btn" onclick="adjFont(1)">A+</button><button class="acc-btn" onclick="adjFont(-1)">A-</button></div>
-    <div class="logo-container"><img id="main-logo" src="logo-dark.png" class="main-logo" onclick="showPage('intro')"></div>
-    <nav>
+<body class="dark-mode">
+
+    <div class="top-ruler">
+        <div class="serif text-pink-300">PINK LEAF // COLLECTION</div>
+        <div id="xp-counter" class="font-bold text-[10px] tracking-widest">XP: 0</div>
+    </div>
+
+    <div class="acc-panel">
+        <div class="acc-btn" title="Accessibility">♿</div>
+        <button class="acc-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+        <button class="acc-btn" onclick="adjFont(1)">A+</button>
+        <button class="acc-btn" onclick="adjFont(-1)">A-</button>
+        <button class="acc-btn" onclick="toggleLang()">🌐</button>
+    </div>
+
+    <div class="logo-container"><img id="main-logo" src="logo-light.png" class="main-logo" onclick="showPage('intro')"></div>
+    
+    <nav class="flex justify-center gap-8 mb-10">
         <button class="nav-link nav-active" onclick="showPage('intro', this)" data-he="בית" data-en="HOME">בית</button>
         <button class="nav-link" onclick="showPage('store', this)" data-he="חנות" data-en="STORE">חנות</button>
         <button class="nav-link" onclick="showPage('vault', this)" data-he="ארכיון" data-en="VAULT">ארכיון</button>
         <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
     </nav>
-    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center"><div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10"><div id="intro-content" class="text-[14px] opacity-90 space-y-6 tracking-[1px] leading-relaxed"></div><button class="btn max-w-[200px] mx-auto mt-10" onclick="window.open('https://wa.me/972500000000')">INQUIRE</button></div></main>
-    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-10"><button class="side-arrow" style="left: -120px;" onclick="spin(1)"><div class="arrow-shape arrow-left"></div></button><div id="store-grid"></div><button class="side-arrow" style="right: -120px;" onclick="spin(-1)"><div class="arrow-shape arrow-right"></div></button></main>
-    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6"><div class="flex justify-center flex-wrap gap-8 mb-16"><button onclick="renderVault('Alocasia')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">ALOCASIA</button><button onclick="renderVault('Monstera')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">MONSTERA</button><button onclick="renderVault('Philodendron')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">PHILODENDRON</button><button onclick="renderVault('Others')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">OTHERS</button></div><div id="vault-grid" class="vault-grid"></div></main>
-    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative"><div id="lab-feedback"></div><div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)]"></div></main>
+
+    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
+        <div class="p-12 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)] backdrop-blur-md">
+            <div id="intro-content" class="text-[14px] leading-relaxed"></div>
+            <button class="btn max-w-[180px] mx-auto mt-8" onclick="window.open('https://wa.me/972559116990')">INQUIRE</button>
+        </div>
+    </main>
+
+    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-10">
+        <div id="store-grid"></div>
+        <div class="flex justify-center gap-10 mt-6">
+            <button class="btn w-32" onclick="spin(1)">PREVIOUS</button>
+            <button class="btn w-32" onclick="spin(-1)">NEXT</button>
+        </div>
+    </main>
+
+    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6 text-center">
+        <div id="vault-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
+    </main>
+
+    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative">
+        <div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)] relative">
+            <div id="lab-feedback"></div> <div id="lab-inner"></div>
+        </div>
+        <div id="lab-correction">
+            <h2 class="serif text-red-500 text-xl mb-4">INCORRECT</h2>
+            <div class="portal mx-auto w-48 h-48"><img id="correct-img" class="w-full h-full object-cover"></div>
+            <p id="correct-name" class="serif text-lg my-6 uppercase tracking-widest"></p>
+            <button class="btn w-48" onclick="closeCorrection()">TRY AGAIN</button>
+        </div>
+    </main>
+
     <script>
-        const DB = {"PV1":"Epipremnum Giganteum aurea","PV2":"Epipremnum Giganteum mint","PV3":"Ficus lyrata variegated","PV4":"Epipremum pinnatum Aurea","PV5":"Monstera delisiosa green snow","PV6":"Monstera legacy","PV7":"Monstera Thai Constellation","PV8":"Monstera 'Yellow Marilyn'","PV9":"Monstera deliciosa aurea","PV10":"Monstera Mint var","PV11":"Monstera 'White Monster'","PV12":"Monstera cream brulee","PV13":"Raphidophora Tetrasperma Var","PV14":"Alocasia Dragon Scale mint","PV15":"Alocasia Dragon Scale white","PV16":"Alocasia frydek var","PV17":"Alocasia Green Bambino var","PV18":"Alocasia wentii variegated","PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV21":"Alocasia Bambino aurea","PV22":"Alocasia Black Velvet pink Var","PV23":"Alocasia Black Velvet Aurea","PV24":"Alocasia odora var","PV25":"Alocasia macrorrhizos var","PV26":"Alocasia longiloba Var","PV27":"Syngonium Podophyllum albo","PV28":"Anthurium crassinervium Var","PV29":"Anthurium clarinerviu var","PV30":"Alocasia zebrina mint","PV31":"Alocasia zebrina aurea","PV32":"Alocasia Nairobi Nights var","PV33":"Xanthosoma frozen planet","PV34":"Alocasia lauterbachiana var","PV35":"Alocasia Jacklyn aurea","PV36":"Alocasia Yucatanense var","PV37":"Alocasia Silver Dragon aurea","PV38":"Alocasia Silver Dragon albo","PV39":"Alocasia Sinuata aurea","PV40":"Alocasia ninja albo","PV41":"Alocasia odora Okinawa White","PV42":"Alocasia odora Okinawa Yellow","PV43":"Alocasia Regal Shield albo","PV44":"Alocasia Pink Dragon Albo","PV45":"Alocasia sarian albo","PV46":"Elephant ear Var","PV47":"Philodendron bipinnatifidum var","PV48":"Philodendron Jose Buono","PV49":"Philodendron Burle Marx Albo","PV50":"Philodendron Micans Var","PV51":"Philodendron Florida beauty","PV52":"Philodendron Strawberry Shake","PV53":"Philodendron domesticum var","PV54":"Philodendron Giganteum Blizzard","PV55":"Philodendron White Knight","PV56":"Philodendron forest of white","PV57":"Philodendron White Princess","PV58":"Philodendron White Wizard","PV59":"Philodendron Pink Princess Marble","PV60":"Philodendron caramel Marble","PV61":"Philodendron Ring of Fire","PV62":"Philodendron Melanochrysum pink","PV63":"Philodendron billietiae Var","PV64":"Philodendron Gloriosum var","PV65":"Philodendron Green Emerald var","PV66":"Philodendron tortum var","PV67":"Philodendron olympaid var","PV68":"Homalomena aurea","PV69":"Homalomena mint","PV70":"Homalomena Snowflakes","PV71":"Musa AeAe florida","PV72":"Musa Nono pink","PV73":"Alocasia cuprea Red Secret var","PV74":"Alocasia Stingray var","PV75":"Alocasia Shock Treatment","PV76":"Alocasia Watsoniana shiny var","PV77":"Alocasia watsoniana doff pink","PV78":"Alocasia Simpo white","PV79":"Alocasia Nobilis Pink Var","PV80":"Alocasia Scalprum white","PV81":"Alocasia heart balloon var","PV82":"Alocasia Azlanii white Var","PV83":"Alocasia Pseudo sanderiana Aurea","PV84":"Alocasia Pseudo sanderiana Pink","PV85":"Alocasia nebula aurea","PV86":"Alocasia nebula albo","PV87":"Alocasia Maharani Var","PV88":"Caladium lindenii var","PV89":"Alocasia Melo white var"};
+        const DB = {"PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV22":"Alocasia Black Velvet pink Var","PV36":"Alocasia Yucatanense variegated"};
+        const storeInfo = {
+            "PV22": { name: "Black Velvet Pink", light: "65%", hum: "80%", diff: "Hard" },
+            "PV19": { name: "Polly Pink Var", light: "70%", hum: "85%", diff: "Expert" },
+            "PV20": { name: "Bambino Arrow Var", light: "60%", hum: "75%", diff: "Medium" }
+        };
+
         const intros = {
+            en: `<p>Pink Leaf Studio: Specialty botanical archive based in Ramat Gan, Israel.</p>`,
+            he: `<p>Pink Leaf Studio: ארכיון בוטני נדיר. ממוקמים ברמת גן.</p>`
+        };
+
+        let lang='he', rot=0, xp=parseInt(localStorage.getItem('pl_xp'))||0, streak=0;
+
+        function showPage(p, el){
+            document.querySelectorAll('main').forEach(m=>m.classList.add('hidden'));
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(el){ document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('nav-active')); el.classList.add('nav-active'); }
+            if(p==='intro') updateIntro();
+            if(p==='store') renderStore();
+            if(p==='lab') startLab();
+            document.getElementById('xp-counter').innerText = `XP: ${xp}`;
+        }
+
+        function updateIntro(){ document.getElementById('intro-content').innerHTML = intros[lang]; }
+
+        function renderStore(){
+            const pts = Object.keys(storeInfo); const ang = 360/pts.length;
+            let h = `<div class="carousel-container"><div class="carousel-wheel" id="wheel">`;
+            pts.forEach((id, i) => {
+                const info = storeInfo[id];
+                h += `
+                <div class="store-card ${i===0?'card-focus':''}" style="transform:rotateY(${i*ang}deg) translateZ(350px)">
+                    <div class="portal"><img src="plants/${id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div>
+                    <p class="serif text-[13px] font-bold mb-4 tracking-widest uppercase">${info.name}</p>
+                    <div class="w-full mb-6">
+                        <div class="stat-row"><span>☀️ Light</span><span>${info.light}</span></div>
+                        <div class="stat-row"><span>💧 Humidity</span><span>${info.hum}</span></div>
+                        <div class="stat-row"><span>🌡️ Difficulty</span><span>${info.diff}</span></div>
+                    </div>
+                    <button class="btn" onclick="window.open('https://wa.me/972559116990')">INQUIRE</button>
+                </div>`;
+            });
+            document.getElementById('store-grid').innerHTML = h+'</div></div>'; window.sLen=pts.length; window.sAng=ang;
+        }
+
+        function spin(d){ rot+=d*window.sAng; document.getElementById('wheel').style.transform=`rotateY(${rot}deg)`; const cards=document.querySelectorAll('.store-card'); const act=(Math.round(-rot/window.sAng)%window.sLen+window.sLen)%window.sLen; cards.forEach((c,i)=>c.classList.toggle('card-focus', i===act));}
+
+        function startLab(){
+            const keys=Object.keys(DB); const q=keys[Math.floor(Math.random()*keys.length)];
+            let choices=[DB[q]]; while(choices.length<3){ let r=DB[keys[Math.floor(Math.random()*keys.length)]]; if(!choices.includes(r)) choices.push(r);}
+            choices.sort(()=>Math.random()-0.5);
+            document.getElementById('lab-inner').innerHTML = `
+                <p class="serif text-[10px] opacity-40 mb-4 tracking-widest">STREAK: ${streak}/5</p>
+                <div class="portal mx-auto mb-8 w-48 h-48"><img src="plants/${q}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-light.png'"></div>
+                <div class="flex flex-col gap-4">${choices.map(c=>`<button class="btn" onclick="checkLab('${c}','${DB[q]}','${q}')">${c}</button>`).join('')}</div>`;
+        }
+
+        function checkLab(c,a,id){
+            const fb=document.getElementById('lab-feedback');
+            if(c===a){
+                streak++; xp+=10;
+                fb.innerHTML = "✅"; fb.style.color = "#4ade80"; fb.style.opacity = "1";
+                if(streak===5){ confetti(); xp+=100; alert("STREAK BONUS! +100 XP"); streak=0; }
+                setTimeout(()=>{ fb.style.opacity = "0"; startLab(); }, 800);
+            } else {
+                fb.innerHTML = "❌"; fb.style.color = "#f87171"; fb.style.opacity = "1";
+                setTimeout(()=>{ 
+                    fb.style.opacity = "0";
+                    streak=0; 
+                    document.getElementById('correct-img').src=`plants/${id}.jpg`;
+                    document.getElementById('correct-name').innerText=a;
+                    document.getElementById('lab-correction').style.display='flex';
+                }, 800);
+            }
+            localStorage.setItem('pl_xp', xp); document.getElementById('xp-counter').innerText = `XP: ${xp}`;
+        }
+
+        function closeCorrection(){ document.getElementById('lab-correction').style.display='none'; startLab(); }
+        function toggleTheme(){ const d=document.body.classList.toggle('dark-mode'); document.getElementById('theme-btn').innerText=d?"🌙":"☀️"; }
+        function adjFont(v){ document.body.style.fontSize=(parseFloat(getComputedStyle(document.body).fontSize)+v)+"px";}
+        function toggleLang(){ lang=lang==='he'?'en':'he'; updateIntro(); }
+        window.onload=()=>{ updateIntro(); showPage('intro'); };
+    </script>
+</body>
+</html>
