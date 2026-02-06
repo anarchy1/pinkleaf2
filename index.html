@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYP<!D<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -34,35 +34,96 @@
         .vault-name { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 15px; font-weight: 600; line-height: 1.4; }
         .btn { width: 100%; border: 1.5px solid var(--pink); padding: 14px; font-size: 10px; letter-spacing: 3px; border-radius: 50px; cursor: pointer; background: transparent; color: var(--pink); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
         .btn:hover { background: var(--pink); color: white; }
-        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 40px; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
-        .acc-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); font-size: 14px; }
-        .hidden { display: none; }
-        #lab-feedback { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 500; pointer-events: none; }
+        .acc-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(212, 165, 178, 0.15); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 40px; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px; z-index: 5000; }
+        .acc-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); font-size: 18px; }
+        .hidden { display: none !important; }
+        #lab-feedback { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 120px; z-index: 1000; pointer-events: none; opacity: 0; transition: 0.3s; }
+        #lab-correction { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
-<body>
-    <div class="top-ruler"><div class="serif">PINK LEAF // COLLECTION</div><button onclick="toggleLang()" class="font-bold text-[10px] tracking-[3px]">HE / EN</button></div>
-    <div class="acc-panel"><button class="acc-btn" onclick="toggleTheme()" id="theme-btn">☀️</button><button class="acc-btn" onclick="adjFont(1)">A+</button><button class="acc-btn" onclick="adjFont(-1)">A-</button></div>
+<body class="dark-mode">
+    <div class="top-ruler">
+        <div class="serif">PINK LEAF // COLLECTION</div>
+        <div id="xp-counter" class="font-bold text-[10px] tracking-widest">XP: 0</div>
+    </div>
+
+    <!-- Accessibility panel - fixed on right, always visible -->
+    <div class="acc-panel">
+        <div class="acc-btn" title="נגישות / Accessibility">♿</div>
+        <button class="acc-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+        <button class="acc-btn" onclick="adjFont(1)">A+</button>
+        <button class="acc-btn" onclick="adjFont(-1)">A-</button>
+        <button class="acc-btn" onclick="toggleLang()">🌐</button>
+    </div>
+
     <div class="logo-container"><img id="main-logo" src="logo-dark.png" class="main-logo" onclick="showPage('intro')"></div>
+    
     <nav>
         <button class="nav-link nav-active" onclick="showPage('intro', this)" data-he="בית" data-en="HOME">בית</button>
         <button class="nav-link" onclick="showPage('store', this)" data-he="חנות" data-en="STORE">חנות</button>
         <button class="nav-link" onclick="showPage('vault', this)" data-he="ארכיון" data-en="VAULT">ארכיון</button>
         <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
     </nav>
-    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center"><div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10"><div id="intro-content" class="text-[14px] opacity-90 space-y-6 tracking-[1px] leading-relaxed"></div><button class="btn max-w-[200px] mx-auto mt-10" onclick="window.open('https://wa.me/97254116990')">INQUIRE</button></div></main>
-    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-10"><button class="side-arrow" style="left: -120px;" onclick="spin(1)"><div class="arrow-shape arrow-left"></div></button><div id="store-grid"></div><button class="side-arrow" style="right: -120px;" onclick="spin(-1)"><div class="arrow-shape arrow-right"></div></button></main>
-    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6"><div class="flex justify-center flex-wrap gap-8 mb-16"><button onclick="renderVault('Alocasia')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">ALOCASIA</button><button onclick="renderVault('Monstera')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">MONSTERA</button><button onclick="renderVault('Philodendron')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">PHILODENDRON</button><button onclick="renderVault('Others')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">OTHERS</button></div><div id="vault-grid" class="vault-grid"></div></main>
-    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative"><div id="lab-feedback"></div><div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)]"></div></main>
+
+    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
+        <div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10">
+            <div id="intro-content" class="text-[14px] opacity-90 space-y-6 tracking-[1px] leading-relaxed"></div>
+            <div class="flex justify-center gap-6 mt-8">
+                <button class="btn max-w-[180px]" onclick="window.open('https://wa.me/972559116990')">שאל אותנו</button>
+                <button class="btn max-w-[180px]" onclick="window.open('https://www.instagram.com/pinkleaf.studio')">INSTAGRAM</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-10">
+        <button class="side-arrow" onclick="spin(1)"><div class="arrow-shape arrow-left"></div></button>
+        <div id="store-grid"></div>
+        <button class="side-arrow" onclick="spin(-1)"><div class="arrow-shape arrow-right"></div></button>
+    </main>
+
+    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6">
+        <div class="flex justify-center flex-wrap gap-8 mb-16">
+            <button onclick="renderVault('Alocasia')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">ALOCASIA</button>
+            <button onclick="renderVault('Monstera')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">MONSTERA</button>
+            <button onclick="renderVault('Philodendron')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">PHILODENDRON</button>
+            <button onclick="renderVault('Others')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">OTHERS</button>
+        </div>
+        <div id="vault-grid" class="vault-grid"></div>
+    </main>
+
+    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative">
+        <div id="lab-feedback"></div>
+        <div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)]"></div>
+        <div id="lab-correction">
+            <h2 class="serif text-red-500 text-xl mb-4">שגוי / INCORRECT</h2>
+            <div class="portal mx-auto w-48 h-48"><img id="correct-img" class="w-full h-full object-cover"></div>
+            <p id="correct-name" class="serif text-lg my-6 uppercase tracking-widest"></p>
+            <button class="btn w-48" onclick="closeCorrection()">נסה שוב / TRY AGAIN</button>
+        </div>
+    </main>
+
     <script>
-        const DB = {"PV1":"Epipremnum Giganteum aurea","PV2":"Epipremnum Giganteum mint","PV3":"Ficus lyrata variegated","PV4":"Epipremum pinnatum Aurea","PV5":"Monstera delisiosa green snow","PV6":"Monstera legacy","PV7":"Monstera Thai Constellation","PV8":"Monstera 'Yellow Marilyn'","PV9":"Monstera deliciosa aurea","PV10":"Monstera Mint var","PV11":"Monstera 'White Monster'","PV12":"Monstera cream brulee","PV13":"Raphidophora Tetrasperma Var","PV14":"Alocasia Dragon Scale mint","PV15":"Alocasia Dragon Scale white","PV16":"Alocasia frydek var","PV17":"Alocasia Green Bambino var","PV18":"Alocasia wentii variegated","PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV21":"Alocasia Bambino aurea","PV22":"Alocasia Black Velvet pink Var","PV23":"Alocasia Black Velvet Aurea","PV24":"Alocasia odora var","PV25":"Alocasia macrorrhizos var","PV26":"Alocasia longiloba Var","PV27":"Syngonium Podophyllum albo","PV28":"Anthurium crassinervium Var","PV29":"Anthurium clarinerviu var","PV30":"Alocasia zebrina mint","PV31":"Alocasia zebrina aurea","PV32":"Alocasia Nairobi Nights var","PV33":"Xanthosoma frozen planet","PV34":"Alocasia lauterbachiana var","PV35":"Alocasia Jacklyn aurea","PV36":"Alocasia Yucatanense var","PV37":"Alocasia Silver Dragon aurea","PV38":"Alocasia Silver Dragon albo","PV39":"Alocasia Sinuata aurea","PV40":"Alocasia ninja albo","PV41":"Alocasia odora Okinawa White","PV42":"Alocasia odora Okinawa Yellow","PV43":"Alocasia Regal Shield albo","PV44":"Alocasia Pink Dragon Albo","PV45":"Alocasia sarian albo","PV46":"Elephant ear Var","PV47":"Philodendron bipinnatifidum var","PV48":"Philodendron Jose Buono","PV49":"Philodendron Burle Marx Albo","PV50":"Philodendron Micans Var","PV51":"Philodendron Florida beauty","PV52":"Philodendron Strawberry Shake","PV53":"Philodendron domesticum var","PV54":"Philodendron Giganteum Blizzard","PV55":"Philodendron White Knight","PV56":"Philodendron forest of white","PV57":"Philodendron White Princess","PV58":"Philodendron White Wizard","PV59":"Philodendron Pink Princess Marble","PV60":"Philodendron caramel Marble","PV61":"Philodendron Ring of Fire","PV62":"Philodendron Melanochrysum pink","PV63":"Philodendron billietiae Var","PV64":"Philodendron Gloriosum var","PV65":"Philodendron Green Emerald var","PV66":"Philodendron tortum var","PV67":"Philodendron olympaid var","PV68":"Homalomena aurea","PV69":"Homalomena mint","PV70":"Homalomena Snowflakes","PV71":"Musa AeAe florida","PV72":"Musa Nono pink","PV73":"Alocasia cuprea Red Secret var","PV74":"Alocasia Stingray var","PV75":"Alocasia Shock Treatment","PV76":"Alocasia Watsoniana shiny var","PV77":"Alocasia watsoniana doff pink","PV78":"Alocasia Simpo white","PV79":"Alocasia Nobilis Pink Var","PV80":"Alocasia Scalprum white","PV81":"Alocasia heart balloon var","PV82":"Alocasia Azlanii white Var","PV83":"Alocasia Pseudo sanderiana Aurea","PV84":"Alocasia Pseudo sanderiana Pink","PV85":"Alocasia nebula aurea","PV86":"Alocasia nebula albo","PV87":"Alocasia Maharani Var","PV88":"Caladium lindenii var","PV89":"Alocasia Melo white var"};
+        const DB = {"PV1":"Epipremnum Giganteum aurea","PV2":"Epipremnum Giganteum mint","PV3":"Ficus lyrata variegated","PV4":"Epipremnum pinnatum Aurea","PV5":"Monstera delisiosa green snow","PV6":"Monstera legacy","PV7":"Monstera Thai Constellation","PV8":"Monstera 'Yellow Marilyn'","PV9":"Monstera deliciosa aurea","PV10":"Monstera Mint var","PV11":"Monstera 'White Monster'","PV12":"Monstera cream brulee","PV13":"Raphidophora Tetrasperma Var","PV14":"Alocasia Dragon Scale mint","PV15":"Alocasia Dragon Scale white","PV16":"Alocasia frydek var","PV17":"Alocasia Green Bambino var","PV18":"Alocasia wentii variegated","PV19":"Alocasia Polly pink var","PV20":"Alocasia Bambino Arrow var","PV21":"Alocasia Bambino aurea","PV22":"Alocasia Black Velvet pink Var","PV23":"Alocasia Black Velvet Aurea","PV24":"Alocasia odora var","PV25":"Alocasia macrorrhizos var","PV26":"Alocasia longiloba Var","PV27":"Syngonium Podophyllum albo","PV28":"Anthurium crassinervium Var","PV29":"Anthurium clarinerviu var","PV30":"Alocasia zebrina mint","PV31":"Alocasia zebrina aurea","PV32":"Alocasia Nairobi Nights var","PV33":"Xanthosoma frozen planet","PV34":"Alocasia lauterbachiana var","PV35":"Alocasia Jacklyn aurea","PV36":"Alocasia Yucatanense var","PV37":"Alocasia Silver Dragon aurea","PV38":"Alocasia Silver Dragon albo","PV39":"Alocasia Sinuata aurea","PV40":"Alocasia ninja albo","PV41":"Alocasia odora Okinawa White","PV42":"Alocasia odora Okinawa Yellow","PV43":"Alocasia Regal Shield albo","PV44":"Alocasia Pink Dragon Albo","PV45":"Alocasia sarian albo","PV46":"Elephant ear Var","PV47":"Philodendron bipinnatifidum var","PV48":"Philodendron Jose Buono","PV49":"Philodendron Burle Marx Albo","PV50":"Philodendron Micans Var","PV51":"Philodendron Florida beauty","PV52":"Philodendron Strawberry Shake","PV53":"Philodendron domesticum var","PV54":"Philodendron Giganteum Blizzard","PV55":"Philodendron White Knight","PV56":"Philodendron forest of white","PV57":"Philodendron White Princess","PV58":"Philodendron White Wizard","PV59":"Philodendron Pink Princess Marble","PV60":"Philodendron caramel Marble","PV61":"Philodendron Ring of Fire","PV62":"Philodendron Melanochrysum pink","PV63":"Philodendron billietiae Var","PV64":"Philodendron Gloriosum var","PV65":"Philodendron Green Emerald var","PV66":"Philodendron tortum var","PV67":"Philodendron olympaid var","PV68":"Homalomena aurea","PV69":"Homalomena mint","PV70":"Homalomena Snowflakes","PV71":"Musa AeAe florida","PV72":"Musa Nono pink","PV73":"Alocasia cuprea Red Secret var","PV74":"Alocasia Stingray var","PV75":"Alocasia Shock Treatment","PV76":"Alocasia Watsoniana shiny var","PV77":"Alocasia watsoniana doff pink","PV78":"Alocasia Simpo white","PV79":"Alocasia Nobilis Pink Var","PV80":"Alocasia Scalprum white","PV81":"Alocasia heart balloon var","PV82":"Alocasia Azlanii white Var","PV83":"Alocasia Pseudo sanderiana Aurea","PV84":"Alocasia Pseudo sanderiana Pink"};
+
         const intros = {
             en: `<p><span dir="ltr" class="font-semibold">Pink Leaf</span> is a curated botanical studio specializing in the import, propagation, and preservation of rare and highly variegated exotic plants.<br><br>Based in <strong>Ramat Gan, Israel</strong>. Reservation by full payment only. Pickup is recommended; shipping available upon request.</p>`,
             he: `<p><span dir="ltr" class="font-semibold">Pink Leaf</span> היא סטודיו בוטני אוצר המתמחה בייבוא, ריבוי ושימור של צמחים אקזוטיים נדירים ומגוונים במיוחד.<br><br>ממוקמים ב<strong>רמת גן</strong>. הזמנה באישור ותשלום מלא בלבד. מומלץ איסוף עצמי; משלוח יתאפשר בתיאום מראש.</p>`
         };
+
         let lang='he', rot=0, xp=parseInt(localStorage.getItem('pl_xp'))||0, streak=0;
-        function showPage(p, el){ document.querySelectorAll('main').forEach(m=>m.classList.add('hidden')); document.getElementById('page-'+p).classList.remove('hidden'); if(el){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('nav-active')); el.classList.add('nav-active');} if(p==='intro')updateIntro(); if(p==='store')renderStore(); if(p==='vault')renderVault('Alocasia'); if(p==='lab')startLab();}
+
+        function showPage(p, el){ 
+            document.querySelectorAll('main').forEach(m=>m.classList.add('hidden')); 
+            document.getElementById('page-'+p).classList.remove('hidden'); 
+            if(el){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('nav-active')); el.classList.add('nav-active');} 
+            if(p==='intro')updateIntro(); 
+            if(p==='store')renderStore(); 
+            if(p==='vault')renderVault('Alocasia'); 
+            if(p==='lab')startLab();
+        }
+
         function updateIntro(){document.getElementById('intro-content').innerHTML = intros[lang];}
+
         function renderStore(){
             const pts = ["PV22","PV19","PV20"]; const ang = 360/pts.length; let h = `<div class="carousel-container"><div class="carousel-wheel" id="wheel">`;
             pts.forEach((id,i)=>{ h += `
@@ -78,27 +139,41 @@
             </div>`;});
             document.getElementById('store-grid').innerHTML = h+'</div></div>'; window.sLen=pts.length; window.sAng=ang;
         }
+
         function spin(d){ rot+=d*window.sAng; document.getElementById('wheel').style.transform=`rotateY(${rot}deg)`; const cards=document.querySelectorAll('.store-card'); const act=(Math.round(-rot/window.sAng)%window.sLen+window.sLen)%window.sLen; cards.forEach((c,i)=>c.classList.toggle('card-focus', i===act));}
+
         function renderVault(f){ 
             const get=(n)=>{ if(n>=5&&n<=13)return "Monstera"; if((n>=14&&n<=45)||(n>=73&&n<=89))return "Alocasia"; if(n>=46&&n<=67)return "Philodendron"; return "Others"; }; 
             let h=""; for(let i=1;i<=89;i++){ if(get(i)===f){ const id="PV"+i; h+=`<div class="vault-item"><div class="portal mx-auto w-full mb-2"><img src="plants/${id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div><p class="vault-name px-2">${DB[id]}</p></div>`;}} 
             document.getElementById('vault-grid').innerHTML=h;
         }
+
         function startLab(){
             const keys=Object.keys(DB); const q=keys[Math.floor(Math.random()*keys.length)]; let choices=[DB[q]]; 
-            while(choices.length<3){ let r=DB[keys[Math.floor(Math.random()*keys.length)]]; if(!choices.includes(r)) choices.push(r);} 
+            while(choices.length<4){ let r=DB[keys[Math.floor(Math.random()*keys.length)]]; if(!choices.includes(r)) choices.push(r);} 
             choices.sort(()=>Math.random()-0.5);
-            document.getElementById('lab-box').innerHTML = `<p class="serif text-[10px] tracking-[4px] opacity-40 mb-4">LAB XP: ${xp} | STREAK: ${streak}/5</p><div class="portal mx-auto mb-10 w-52 h-52"><img src="plants/${q}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div><div class="flex flex-col gap-5">${choices.map(c=>`<button class="btn" onclick="checkLab('${c}','${DB[q]}')">${c}</button>`).join('')}</div>`;
+            document.getElementById('lab-box').innerHTML = `<p class="serif text-[10px] tracking-[4px] opacity-40 mb-4">STREAK: ${streak}/5</p><div class="portal mx-auto mb-10 w-52 h-52"><img src="plants/${q}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div><div class="flex flex-col gap-5">${choices.map(c=>`<button class="btn" onclick="checkLab('${c}','${DB[q]}','${q}')">${c}</button>`).join('')}</div>`;
         }
-        function checkLab(c,a){
+
+        function checkLab(c,a,id){
             const fb=document.getElementById('lab-feedback'); 
-            if(c===a){ streak++; xp+=10; fb.innerHTML="✅"; if(streak===5){confetti(); alert("CONGRATULATIONS!"); streak=0;} } 
-            else { streak=0; fb.innerHTML="❌"; } 
-            localStorage.setItem('pl_xp',xp); setTimeout(()=>{fb.innerHTML=""; startLab();},800);
+            if(c===a){ streak++; xp+=10; fb.innerHTML="✅"; fb.style.opacity="1"; if(streak===5){confetti(); alert("בונוס רצף!"); streak=0; xp+=100;} setTimeout(()=>{fb.style.opacity="0"; startLab();},800); } 
+            else { fb.innerHTML="❌"; fb.style.opacity="1"; setTimeout(()=>{ fb.style.opacity="0"; document.getElementById('correct-img').src=`plants/${id}.jpg`; document.getElementById('correct-name').innerText=a; document.getElementById('lab-correction').style.display='flex'; },800); } 
+            localStorage.setItem('pl_xp',xp); document.getElementById('xp-counter').innerText = `XP: ${xp}`;
         }
+
+        function closeCorrection(){ document.getElementById('lab-correction').style.display='none'; startLab(); }
+
         function toggleTheme(){ const d=document.body.classList.toggle('dark-mode'); document.getElementById('theme-btn').innerText=d?"🌙":"☀️"; document.getElementById('main-logo').src=d?"logo-light.png":"logo-dark.png"; }
-        function toggleLang(){ lang=lang==='he'?'en':'he'; document.dir=lang==='he'?'rtl':'ltr'; updateIntro();}
+
+        function toggleLang(){ lang=lang==='he'?'en':'he'; document.dir=lang==='he'?'rtl':'ltr'; updateIntro(); document.querySelectorAll('.nav-link').forEach(n=>n.innerText=n.getAttribute('data-'+lang));}
+
         function adjFont(v){ document.body.style.fontSize=(parseFloat(getComputedStyle(document.body).fontSize)+v)+"px";}
+
+        window.onload=()=>{updateIntro(); showPage('intro');};
+    </script>
+</body>
+</html>
         window.onload = () => {
     sync();
     tab('home');
