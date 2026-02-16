@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Leaf | Master Botanical Archive</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LG4598NF5Z"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LG4598NF5Z');
+    </script>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, updateDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBSUmvi3kPo4e_hB9ix7gBpZLqV25LWOVk",
+        authDomain: "pinkleaf-ccab2.firebaseapp.com",
+        projectId: "pinkleaf-ccab2",
+        storageBucket: "pinkleaf-ccab2.firebasestorage.app",
+        messagingSenderId: "357121411651",
+        appId: "1:357121411651:web:761e54484c7e5a0bb8e2f6",
+        measurementId: "G-WXYK9MJTHK"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    onSnapshot(query(collection(db, 'labRegistry'), orderBy('xp', 'desc')), (snapshot) => {
+        const list = document.getElementById('scoreboard-list');
+        if (!list) return;
+        
+        const currentUser = localStorage.getItem('pl_user');
+        let html = '';
+        let rank = 1;
+        
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const isCurrent = data.name === currentUser;
+            html += `<div class="scoreboard-item ${isCurrent ? 'current' : ''}">
+                        <span class="scoreboard-rank">${rank++}</span>
+                        <span class="scoreboard-name">${data.name}${isCurrent ? ' 🌿' : ''}</span>
+                        <span class="scoreboard-xp">${data.xp}</span>
+                     </div>`;
+        });
+        list.innerHTML = html || '<div style="text-align: center; opacity: 0.5; padding: 10px; font-size: 8px;">No users yet...</div>';
+    });
+
+    window.db = db;
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.doc = doc;
+    window.updateDoc = updateDoc;
+    window.query = query;
+    window.getDocs = getDocs;
+    window.orderBy = orderBy;
+    window.firebaseReady = true;
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #fdfdfd; 
+            --text: #1a1a1a; 
+            --pink: #d4a5b2; 
+            --mellow-pink: rgba(212, 165, 178, 0.4); 
+            --border: rgba(212, 165, 178, 0.3); 
+            --glow: 0 0 50px 15px rgba(212, 165, 178, 0.5); 
+        }
+        body.dark-mode { 
+            --bg: #0a0a0a; 
+            --text: #e5e5e5; 
+            --mellow-pink: rgba(212, 165, 178, 0.25); 
+            --border: rgba(212, 165, 178, 0.2); 
+            --glow: 0 0 65px 20px rgba(212, 165, 178, 0.35); 
+        }
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'Inter', sans-serif; 
+            transition: background 0.6s ease; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
+        .serif { font-family: 'Cinzel', serif; }
+        
+        /* Z-INDEX HIERARCHY - TOP RULER HIGHEST */
+        .top-ruler { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            padding: 12px 25px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 10px; 
+            letter-spacing: 4px; 
+            background: var(--bg); 
+            z-index: 9999; 
+            backdrop-filter: blur(10px); 
+        }
+        .logo-container { 
+            text-align: center; 
+            padding-top: 60px; 
+            padding-bottom: 10px; 
+        }
+        
+        @media (max-width: 768px) {
+            .logo-container {
+                padding-top: 50px;
+                padding-bottom: 5px;
+            }
+        }
+        .main-logo { 
+            width: 65%; 
+            max-width: 280px; 
+            margin: 0 auto; 
+            cursor: pointer; 
+        }
+        
+        /* NAVIGATION - HIGH Z-INDEX BUT BELOW ACCESSIBILITY */
+        nav { 
+            display: flex; 
+            justify-content: center; 
+            gap: 35px; 
+            margin-bottom: 50px; 
+            position: sticky;
+            top: 45px;
+            z-index: 8000;
+            background: var(--bg);
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-link { 
+            cursor: pointer; 
+            opacity: 0.3; 
+            transition: 0.4s; 
+            font-size: 12px; 
+            letter-spacing: 3px; 
+            font-family: 'Cinzel', serif; 
+            background: none; 
+            border: none; 
+            padding-bottom: 8px; 
+            color: var(--text); 
+        }
+        .nav-active { 
+            opacity: 1; 
+            color: var(--pink); 
+            border-bottom: 2px solid var(--pink); 
+        }
+        
+        .carousel-container { 
+            perspective: 2500px; 
+            height: 550px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            margin-top: 20px;
+            isolation: isolate;
+            z-index: 1;
+        }
+        .carousel-wheel { 
+            position: relative; 
+            width: 320px; 
+            height: 460px; 
+            transform-style: preserve-3d; 
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1); 
+        }
+        .store-card { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            backface-visibility: hidden; 
+            transition: 0.8s ease; 
+            border-radius: 40px; 
+            background: var(--bg); 
+            border: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 30px; 
+            opacity: 0.1; 
+            filter: blur(5px); 
+        }
+        .card-focus { 
+            opacity: 1 !important; 
+            filter: blur(0px) !important; 
+            border: 1.5px solid var(--pink) !important; 
+            z-index: 100; 
+            box-shadow: var(--glow); 
+        }
+        .portal { 
+            border-radius: 50%; 
+            overflow: hidden; 
+            aspect-ratio: 1/1; 
+            border: 2px solid var(--mellow-pink); 
+            width: 180px; 
+            margin-bottom: 25px; 
+        }
+        .side-arrow { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            width: 60px; 
+            height: 60px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            z-index: 1000; 
+            background: none; 
+            border: none; 
+        }
+        .arrow-shape { 
+            width: 30px; 
+            height: 30px; 
+            border-left: 3px solid var(--pink); 
+            border-bottom: 3px solid var(--pink); 
+        }
+        .arrow-left { transform: rotate(45deg); }
+        .arrow-right { transform: rotate(-135deg); }
+        .stat-row { 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            font-size: 9px; 
+            letter-spacing: 1px; 
+            opacity: 0.7; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 5px; 
+        }
+        
+        .availability-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 7px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .badge-available {
+            background: rgba(100, 200, 100, 0.2);
+            border: 1px solid rgba(100, 200, 100, 0.5);
+            color: #64c864;
+        }
+        .badge-coming-soon {
+            background: rgba(212, 165, 178, 0.2);
+            border: 1px solid var(--border);
+            color: var(--pink);
+        }
+        
+        .availability-dropdown { 
+            width: 100%; 
+            margin-bottom: 15px; 
+        }
+        .availability-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            background: rgba(212, 165, 178, 0.05);
+            color: var(--text);
+            font-size: 9px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            appearance: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        .availability-select:hover {
+            border-color: var(--pink);
+            background: rgba(212, 165, 178, 0.1);
+        }
+        
+        .store-filter {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+        .store-filter select {
+            padding: 10px 20px;
+            border: 1.5px solid var(--pink);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--pink);
+            font-size: 10px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .vault-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 30px; 
+            margin-top: 20px; 
+        }
+        @media (min-width: 768px) { 
+            .vault-grid { 
+                grid-template-columns: repeat(5, 1fr); 
+                gap: 45px; 
+            } 
+        }
+        .vault-item { text-align: center; }
+        .vault-name { 
+            font-size: 9px; 
+            letter-spacing: 1.5px; 
+            text-transform: uppercase; 
+            margin-top: 15px; 
+            font-weight: 600; 
+            line-height: 1.4; 
+        }
+        
+        .care-product-card {
+            border: 1px solid var(--border);
+            border-radius: 35px;
+            padding: 20px;
+            background: var(--bg);
+            transition: 0.3s;
+            max-width: 300px;
+        }
+        .care-product-card:hover {
+            border-color: var(--pink);
+        }
+        .care-product-card .portal {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 15px;
+        }
+        
+        .btn { 
+            width: 100%; 
+            border: 1.5px solid var(--pink); 
+            padding: 14px; 
+            font-size: 10px; 
+            letter-spacing: 3px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            background: transparent; 
+            color: var(--pink); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            transition: 0.3s; 
+        }
+        .btn:hover { 
+            background: var(--pink); 
+            color: white; 
+        }
+        
+        /* ACCESSIBILITY PANEL - HIGHEST Z-INDEX, LOWER POSITION */
+        .acc-panel { 
+            position: fixed; 
+            right: 10px; 
+            top: 400px !important;
+            background: rgba(212, 165, 178, 0.15); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid var(--border); 
+            border-radius: 25px; 
+            padding: 10px 5px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            z-index: 10000 !important;
+        }
+        .acc-btn { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            border: 1px solid var(--border); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            background: var(--bg); 
+            font-size: 16px; 
+        }
+        .hidden { display: none !important; }
+        #lab-feedback { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-size: 120px; 
+            z-index: 1000; 
+            pointer-events: none; 
+            opacity: 0; 
+            transition: 0.3s; 
+        }
+        #lab-correction { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--bg); 
+            z-index: 9998; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        /* LAB FLOATERS - TOP CORNERS */
+        .lab-only { display: none; }
+        body.on-lab-page .lab-only { display: block; }
+        
+        #xp-counter { display: none; }
+        body.on-lab-page #xp-counter { display: block; }
+        
+        .lab-registry-float { 
+            position: fixed !important; 
+            top: 45px !important;
+            left: 10px !important;
+            width: 140px !important;
+            background: rgba(10, 10, 10, 0.85); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(212, 165, 178, 0.25); 
+            border-radius: 20px; 
+            padding: 12px 8px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); 
+            z-index: 10001 !important; 
+            overflow: hidden;
+            font-size: 9px;
+            pointer-events: none;
+        }
+        
+        .lab-registry-float * {
+            pointer-events: auto;
+        }
+        
+        body:not(.dark-mode) .lab-registry-float {
+            background: rgba(253, 253, 253, 0.95);
+            border-color: rgba(212, 165, 178, 0.4);
+        }
+        
+        .registry-header-small { 
+            font-family: 'Cinzel', serif; 
+            font-size: 8px; 
+            letter-spacing: 1px; 
+            text-align: center; 
+            color: var(--pink); 
+            margin-bottom: 8px; 
+            text-transform: uppercase; 
+        }
+        
+        .registry-input { 
+            width: 100%; 
+            padding: 8px 10px; 
+            margin-bottom: 8px; 
+            border: 1px solid rgba(212, 165, 178, 0.2); 
+            border-radius: 15px; 
+            background: rgba(212, 165, 178, 0.05); 
+            color: var(--text); 
+            font-size: 8px; 
+        }
+        
+        .registry-message { 
+            text-align: center; 
+            font-size: 7px; 
+            margin-top: 8px; 
+            opacity: 0.7; 
+        }
+        
+      /* LAB SCOREBOARD - COMPACT SCROLLABLE BOX */
+.lab-scoreboard-float { 
+    position: fixed !important;
+    top: 45px !important;
+    right: 10px !important;
+    width: 140px !important;
+    height: 220px !important;  /* Compact height - same as header area */
+    background: rgba(253, 253, 253, 0.95);  /* Bright mode preserved */
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 165, 178, 0.4);  /* Original border color */
+    border-radius: 20px;
+    padding: 12px 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(212, 165, 178, 0.2);  /* Premium floating shadow */
+    z-index: 10001 !important;
+    overflow: hidden;
+    font-size: 8px;
+    pointer-events: auto !important;  /* Makes it interactive */
+    display: none;
+}
+
+/* Only show on Lab page */
+body.on-lab-page .lab-scoreboard-float {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Dark mode variant */
+body.dark-mode .lab-scoreboard-float {
+    background: rgba(10, 10, 10, 0.85);
+    border-color: rgba(212, 165, 178, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.lab-scoreboard-float * {
+    pointer-events: auto;
+}
+
+.scoreboard-header-small { 
+    font-family: 'Cinzel', serif; 
+    font-size: 8px; 
+    letter-spacing: 1px; 
+    text-align: center; 
+    color: var(--pink); 
+    margin-bottom: 8px; 
+    text-transform: uppercase;
+    flex-shrink: 0;  /* Keeps header fixed */
+}
+
+/* THE SCROLL ENGINE - This makes names scrollable */
+.scoreboard-list { 
+    flex: 1;  /* Takes remaining space */
+    overflow-y: auto;  /* Enables scroll */
+    overflow-x: hidden;
+    margin-top: 5px;
+    padding-right: 5px;
+}
+
+/* THIN PROFESSIONAL SCROLLBAR */
+.scoreboard-list::-webkit-scrollbar {
+    width: 3px;
+}
+
+.scoreboard-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scoreboard-list::-webkit-scrollbar-thumb {
+    background: var(--pink);
+    border-radius: 10px;
+}
+
+.scoreboard-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 165, 178, 0.8);
+}
+
+/* Firefox scrollbar */
+.scoreboard-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pink) transparent;
+}   
+        .lab-scoreboard-float * {
+            pointer-events: auto;
+        }
+        
+        body:not(.dark-mode) .lab-scoreboard-float {
+            background: rgba(253, 253, 253, 0.95);
+            border-color: rgba(212, 165, 178, 0.4);
+        }
+        
+        .scoreboard-header-small { 
+            font-family: 'Cinzel', serif; 
+            font-size: 8px; 
+            letter-spacing: 1px; 
+            text-align: center; 
+            color: var(--pink); 
+            margin-bottom: 1px; 
+            text-transform: uppercase; 
+        }
+        
+        
+        
+        .scoreboard-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 6px 8px; 
+            margin-bottom: 4px; 
+            background: rgba(212, 165, 178, 0.05); 
+            border: 1px solid rgba(212, 165, 178, 0.1); 
+            border-radius: 10px; 
+            font-size: 7px; 
+        }
+        
+        .scoreboard-rank { 
+            font-family: 'Cinzel', serif; 
+            font-weight: 700; 
+            color: var(--pink); 
+            width: 20px; 
+            text-align: center; 
+        }
+        
+        .scoreboard-name { 
+            flex: 1; 
+            padding: 0 6px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        
+        .scoreboard-xp { 
+            font-weight: 600; 
+            opacity: 0.8; 
+        }
+        
+        /* LAB CARD - PULL UP VERY CLOSE TO MENU BAR */
+        body.on-lab-page #page-lab {
+            padding-top: 0px !important;
+        }
+        
+        body.on-lab-page .logo-container {
+            padding-top: 50px !important;
+            padding-bottom: 10px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-ruler">
+        <div class="serif">PINK LEAF // COLLECTION</div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            <div id="xp-counter" class="font-bold text-[10px] tracking-widest">XP: 0</div>
+        </div>
+    </div>
+
+    <div class="acc-panel">
+        <div class="acc-btn" title="נגישות / Accessibility">♿</div>
+        <button class="acc-btn" onclick="toggleTheme()" id="theme-btn">☀️</button>
+        <button class="acc-btn" onclick="adjFont(1)">A+</button>
+        <button class="acc-btn" onclick="adjFont(-1)">A-</button>
+        <button class="acc-btn" onclick="toggleLang()">🌐</button>
+    </div>
+
+    <div class="lab-registry-float lab-only" id="registry-float">
+        <h3 class="registry-header-small">Join Rankings</h3>
+        <form onsubmit="registerUser(event)">
+            <input type="text" id="reg-name" class="registry-input" placeholder="Your Name" required maxlength="30">
+            <input type="email" id="reg-email" class="registry-input" placeholder="Email" required>
+            <button type="submit" class="btn" style="font-size: 8px; padding: 8px;">Register</button>
+        </form>
+        <p id="reg-message" class="registry-message"></p>
+    </div>
+
+    <div class="lab-scoreboard-float lab-only" id="scoreboard-float">
+        <h3 class="scoreboard-header-small">Lab Rankings</h3>
+        <div class="scoreboard-list" id="scoreboard-list">
+            <div style="text-align: center; opacity: 0.5; padding: 10px; font-size: 7px;">Loading...</div>
+        </div>
+    </div>
+
+    <div class="logo-container"><img id="main-logo" src="logo-dark.png" class="main-logo" onclick="showPage('intro')"></div>
+    
+    <nav>
+        <button class="nav-link nav-active" onclick="showPage('intro', this)" data-he="בית" data-en="HOME">בית</button>
+        <button class="nav-link" onclick="showPage('store', this)" data-he="חנות" data-en="STORE">חנות</button>
+        <button class="nav-link" onclick="showPage('care', this)" data-he="טיפול" data-en="CARE">טיפול</button>
+        <button class="nav-link" onclick="showPage('vault', this)" data-he="ארכיון" data-en="VAULT">ארכיון</button>
+        <button class="nav-link" onclick="showPage('lab', this)" data-he="מעבדה" data-en="LAB">מעבדה</button>
+    </nav>
+
+    <main id="page-intro" class="max-w-2xl mx-auto p-6 text-center">
+        <div class="p-16 border border-[var(--border)] rounded-[70px] bg-[var(--mellow-pink)] backdrop-blur-md mb-10">
+            <div id="intro-content" class="text-[14px] opacity-90 space-y-6 tracking-[1px] leading-relaxed"></div>
+            <div class="flex justify-center gap-6 mt-8">
+                <button class="btn max-w-[180px]" onclick="window.open('https://wa.me/972559116990')">שאל אותנו</button>
+                <button class="btn max-w-[180px]" onclick="window.open('https://www.instagram.com/pinkleaf.studio')">INSTAGRAM</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="page-store" class="hidden max-w-4xl mx-auto relative px-4 pb-20">
+        <div class="store-filter">
+            <select id="store-filter-select" onchange="filterStore()">
+                <option value="all">All Plants</option>
+                <option value="available">Available</option>
+                <option value="coming">Coming Soon</option>
+            </select>
+        </div>
+        
+        <button class="side-arrow left-10" onclick="spin(1)"><div class="arrow-shape arrow-left"></div></button>
+        <div id="store-grid"></div>
+        <button class="side-arrow right-10" onclick="spin(-1)"><div class="arrow-shape arrow-right"></div></button>
+    </main>
+
+    <main id="page-vault" class="hidden max-w-7xl mx-auto p-6">
+        <div class="flex justify-center flex-wrap gap-8 mb-16">
+            <button onclick="renderVault('Alocasia')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">ALOCASIA</button>
+            <button onclick="renderVault('Monstera')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">MONSTERA</button>
+            <button onclick="renderVault('Philodendron')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">PHILODENDRON</button>
+            <button onclick="renderVault('Others')" class="serif text-[11px] opacity-40 hover:opacity-100 tracking-[4px]">OTHERS</button>
+        </div>
+        <div id="vault-grid" class="vault-grid"></div>
+    </main>
+
+    <main id="page-care" class="hidden max-w-7xl mx-auto p-6 text-center pb-20">
+        <div class="logo-container" style="padding-top: 20px;">
+            <h2 class="serif mb-10 tracking-[3px] opacity-60 text-[14px]">BOTANICAL CARE</h2>
+        </div>
+        <div id="care-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 0 20px;"></div>
+    </main>
+
+    <main id="page-lab" class="hidden max-w-md mx-auto p-6 text-center relative">
+        <div id="lab-feedback"></div>
+        <div id="lab-box" class="p-10 border border-[var(--border)] rounded-[60px] bg-[var(--mellow-pink)]"></div>
+        <div id="lab-correction">
+            <h2 class="serif text-red-500 text-xl mb-4">שגוי / INCORRECT</h2>
+            <div class="portal mx-auto w-48 h-48"><img id="correct-img" class="w-full h-full object-cover"></div>
+            <p id="correct-name" class="serif text-lg my-6 uppercase tracking-widest"></p>
+            <button class="btn w-48" onclick="closeCorrection()">נסה שוב / TRY AGAIN</button>
+        </div>
+    </main>
+
+    <script>
+        const MASTER_DB = {
+    "PV1":{"name":"Epipremnum Giganteum aurea","family":"Others"},
+    "PV2":{"name":"Epipremnum Giganteum mint","family":"Others"},
+    "PV3":{"name":"Ficus lyrata variegated","family":"Others"},
+    "PV4":{"name":"Epipremnum pinnatum Aurea","family":"Others"},
+    "PV5":{"name":"Monstera delisiosa green snow","family":"Monstera"},
+    "PV6":{"name":"Monstera legacy","family":"Monstera"},
+    "PV7":{"name":"Monstera Thai Constellation","family":"Monstera"},
+    "PV8":{"name":"Monstera 'Yellow Marilyn'","family":"Monstera"},
+    "PV9":{"name":"Monstera deliciosa aurea","family":"Monstera"},
+    "PV10":{"name":"Monstera Mint var","family":"Monstera"},
+    "PV11":{"name":"Monstera 'White Monster'","family":"Monstera"},
+    "PV12":{"name":"Monstera cream brulee","family":"Monstera"},
+    "PV13":{"name":"Raphidophora Tetrasperma Var","family":"Others"},
+    "PV14":{"name":"Alocasia Dragon Scale mint","family":"Alocasia"},
+    "PV15":{"name":"Alocasia Dragon Scale white","family":"Alocasia"},
+    "PV16":{"name":"Alocasia frydek var","family":"Alocasia"},
+    "PV17":{"name":"Alocasia Green Bambino var","family":"Alocasia"},
+    "PV18":{"name":"Alocasia wentii variegated","family":"Alocasia"},
+    "PV19":{"name":"Alocasia Polly pink var","family":"Alocasia"},
+    "PV20":{"name":"Alocasia Bambino arrow var","family":"Alocasia"},
+    "PV21":{"name":"Alocasia Bambino aurea","family":"Alocasia"},
+    "PV22":{"name":"Alocasia Black Velvet pink Var","family":"Alocasia"},
+    "PV23":{"name":"Alocasia Black Velvet Aurea","family":"Alocasia"},
+    "PV24":{"name":"Alocasia odora var","family":"Alocasia"},
+    "PV25":{"name":"Alocasia macrorrhizos var","family":"Alocasia"},
+    "PV26":{"name":"Alocasia longiloba Var","family":"Alocasia"},
+    "PV27":{"name":"Syngonium Podophyllum albo","family":"Others"},
+    "PV28":{"name":"Anthurium crassinervium Var","family":"Others"},
+    "PV29":{"name":"Anthurium clarinerviu var","family":"Others"},
+    "PV30":{"name":"Alocasia zebrina mint","family":"Alocasia"},
+    "PV31":{"name":"Alocasia zebrina aurea","family":"Alocasia"},
+    "PV32":{"name":"Alocasia Nairobi Nights var","family":"Alocasia"},
+    "PV33":{"name":"Xanthosoma frozen planet","family":"Others"},
+    "PV34":{"name":"Alocasia lauterbachiana var","family":"Alocasia"},
+    "PV35":{"name":"Alocasia Jacklyn aurea","family":"Alocasia"},
+    "PV36":{"name":"Alocasia Yucatanense var","family":"Alocasia"},
+    "PV37":{"name":"Alocasia Silver Dragon aurea","family":"Alocasia"},
+    "PV38":{"name":"Alocasia Silver Dragon albo","family":"Alocasia"},
+    "PV39":{"name":"Alocasia Sinuata aurea","family":"Alocasia"},
+    "PV40":{"name":"Alocasia ninja albo","family":"Alocasia"},
+    "PV41":{"name":"Alocasia odora Okinawa White","family":"Alocasia"},
+    "PV42":{"name":"Alocasia odora Okinawa Yellow","family":"Alocasia"},
+    "PV43":{"name":"Alocasia Regal Shield albo","family":"Alocasia"},
+    "PV44":{"name":"Alocasia Pink Dragon Albo","family":"Alocasia"},
+    "PV45":{"name":"Alocasia sarian albo","family":"Alocasia"},
+    "PV46":{"name":"Alocasia gageana aurea variegata","family":"Alocasia"},
+    "PV47":{"name":"Philodendron bipinnatifidum var","family":"Philodendron"},
+    "PV48":{"name":"Philodendron Jose Buono","family":"Philodendron"},
+    "PV49":{"name":"Philodendron Burle Marx Albo","family":"Philodendron"},
+    "PV50":{"name":"Philodendron Micans Var","family":"Philodendron"},
+    "PV51":{"name":"Philodendron Florida beauty","family":"Philodendron"},
+    "PV52":{"name":"Philodendron Strawberry Shake","family":"Philodendron"},
+    "PV53":{"name":"Philodendron domesticum var","family":"Philodendron"},
+    "PV54":{"name":"Philodendron Giganteum Blizzard","family":"Philodendron"},
+    "PV55":{"name":"Philodendron White Knight","family":"Philodendron"},
+    "PV56":{"name":"Philodendron forest of white","family":"Philodendron"},
+    "PV57":{"name":"Philodendron White Princess","family":"Philodendron"},
+    "PV58":{"name":"Philodendron White Wizard","family":"Philodendron"},
+    "PV59":{"name":"Philodendron Pink Princess Marble","family":"Philodendron"},
+    "PV60":{"name":"Philodendron caramel Marble","family":"Philodendron"},
+    "PV61":{"name":"Philodendron Ring of Fire","family":"Philodendron"},
+    "PV62":{"name":"Philodendron Melanochrysum pink","family":"Philodendron"},
+    "PV63":{"name":"Philodendron billietiae Var","family":"Philodendron"},
+    "PV64":{"name":"Philodendron Gloriosum var","family":"Philodendron"},
+    "PV65":{"name":"Philodendron Green Emerald var","family":"Philodendron"},
+    "PV66":{"name":"Philodendron tortum var","family":"Philodendron"},
+    "PV67":{"name":"Philodendron olympaid var","family":"Philodendron"},
+    "PV68":{"name":"Homalomena aurea","family":"Others"},
+    "PV69":{"name":"Homalomena mint","family":"Others"},
+    "PV70":{"name":"Homalomena Snowflakes","family":"Others"},
+    "PV71":{"name":"Musa AeAe florida","family":"Others"},
+    "PV72":{"name":"Musa Nono pink","family":"Others"},
+    "PV73":{"name":"Alocasia cuprea Red Secret var","family":"Alocasia"},
+    "PV74":{"name":"Alocasia Stingray var","family":"Alocasia"},
+    "PV75":{"name":"Alocasia Shock Treatment","family":"Alocasia"},
+    "PV76":{"name":"Alocasia Watsoniana shiny var","family":"Alocasia"},
+    "PV77":{"name":"Alocasia watsoniana doff pink","family":"Alocasia"},
+    "PV78":{"name":"Alocasia Simpo white","family":"Alocasia"},
+    "PV79":{"name":"Alocasia Nobilis Pink Var","family":"Alocasia"},
+    "PV80":{"name":"Alocasia Scalprum white","family":"Alocasia"},
+    "PV81":{"name":"Alocasia heart balloon var","family":"Alocasia"},
+    "PV82":{"name":"Alocasia Azlanii white Var","family":"Alocasia"},
+    "PV83":{"name":"Alocasia Pseudo sanderiana Aurea","family":"Alocasia"},
+    "PV84":{"name":"Alocasia Pseudo sanderiana Pink","family":"Alocasia"},
+    "PV85":{"name":"Alocasia nebula aurea var","family":"Alocasia"},
+    "PV86":{"name":"Alocasia nebula albo var","family":"Alocasia"},
+    "PV87":{"name":"Alocasia Maharani variegated","family":"Alocasia"},
+    "PV88":{"name":"Caladium lindenii var","family":"Others"},
+    "PV89":{"name":"Alocasia melo white var","family":"Alocasia"}
+};
+
+
+        const intros = {
+            en: `<p><span dir="ltr" class="font-semibold">Pink Leaf</span> is a curated botanical studio specializing in the import, propagation, and preservation of rare and highly variegated exotic plants.<br><br>Based in <strong>Ramat Gan, Israel</strong>. Reservation by full payment only. Pickup is recommended; shipping available upon request.</p>`,
+            he: `<p><span dir="ltr" class="font-semibold">Pink Leaf</span> היא סטודיו בוטני אוצר המתמחה בייבוא, ריבוי ושימור של צמחים אקזוטיים נדירים ומגוונים במיוחד.<br><br>ממוקמים ב<strong>רמת גן</strong>. הזמנה באישור ותשלום מלא בלבד. מומלץ איסוף עצמי; משלוח יתאפשר בתיאום מראש.</p>`
+        };
+
+        const SUBSTRATE_DB = {
+            "basalt": { name: "שבבי בזלת / Basalt Chips", desc: "עשירה ביסודות קורט כמו ברזל, מגנזיום, סיליקה, סידן ואשלגן המשתחררים בהדרגה.", prices: { l2: 11, l10: 44 }, img: "plants/care/substrate/basalt-chips.jpg" },
+            "zeolite": { name: "זאוליט / Zeolite", desc: "משפר את תערובת השתילה: שומר מים ודשנים זמינים לצמח, מונע עודפי מלחים ומאזן pH.", prices: { l1: 28, l2: 50, l10: 220 }, img: "plants/care/substrate/zeolite.jpg" },
+            "carbon": { name: "פחם פעיל / Activated Carbon", desc: "סופח רעלים ופטריות, מונע ריחות וריקבון שורשים. מוסיף אוורור לתערובת.", prices: { l1: 39, l2: 66, l10: 330 }, img: "plants/care/substrate/activated-carbon.jpg" },
+            "pumice": { name: "פומיס / Pumice", desc: "משפר אוורור וניקוז, מעודד התפתחות שורשים בריאה. אידיאלי למצע מאוורר ונושם.", prices: { l2: 11, l10: 33 }, img: "plants/care/substrate/pumice.jpg" },
+            "pazo": { name: "מצע פזו / Pazo Mix", desc: "תערובת ייחודית הכוללת פחם, זאוליט, פומיס ובזלת. ניקוז מצוין ואוורור מקסימלי.", prices: { l2: 17, l10: 83 }, img: "plants/care/substrate/pazo-mix.jpg" }
+        };
+
+        const ALL_STORE_ITEMS = [
+            { id: "PV19", name: "Alocasia Polly Pink var", availability: ["Tissue Culture", "Starter Plant", "Mature Plant", "Corm"], light: "70%", humidity: "85%", status: "available" },
+            { id: "PV81", name: "Alocasia Heart Balloon", availability: ["Tissue Culture", "Starter Plant", "Mature Plant", "Corm"], light: "70%", humidity: "85%", status: "available" },
+            { id: "PV25", name: "Alocasia Macrorrhiza Var.", availability: ["Tissue Culture", "Starter Plant", "Mature Plant"], light: "65%", humidity: "80%", status: "available" },
+            { id: "PV48", name: "Philodendron Jose Buono", availability: ["Tissue Culture", "Starter Plant", "Mature Plant"], light: "55%", humidity: "75%", status: "available" },
+            { id: "PV8", name: "Monstera 'Yellow Marilyn'", light: "60%", humidity: "75%", status: "coming" },
+            { id: "PV11", name: "Monstera 'White Monster'", light: "60%", humidity: "75%", status: "coming" },
+            { id: "PV72", name: "Musa Nono Pink Var", light: "80%", humidity: "85%", status: "coming" },
+            { id: "PV60", name: "Philodendron Caramel Marble", light: "55%", humidity: "70%", status: "coming" },
+        ];
+
+        let lang='he', rot=0, streak=0, xp = parseInt(localStorage.getItem('pl_xp')) || 0;
+        let currentQuestion = null;
+        let currentUserName = localStorage.getItem('pl_user') || null;
+        let currentUserDocId = localStorage.getItem('pl_user_doc_id') || null;
+        let currentFilter = 'all';
+
+        async function updateXPDisplay() {
+    // 1. Immediate Screen Update (User sees it instantly)
+    const counter = document.getElementById('xp-counter');
+    if(counter) counter.innerText = `XP: ${xp}`;
+    
+    // 2. Save to local memory
+    localStorage.setItem('pl_xp', xp);
+
+    // 3. Background Sync to Firebase
+    if (window.firebaseReady && currentUserDocId) {
+        try {
+            const userRef = window.doc(window.db, 'labRegistry', currentUserDocId);
+            await window.updateDoc(userRef, { xp: xp });
+        } catch (e) {
+            console.warn("Firebase Sync delayed, will retry next turn.");
+        }
+    }
+}
+
+        
+        async function registerUser(event) {
+            event.preventDefault();
+            if (!window.firebaseReady) {
+                document.getElementById('reg-message').innerText = 'Connecting...';
+                setTimeout(() => registerUser(event), 1000);
+                return;
+            }
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            try {
+                const q = window.query(window.collection(window.db, 'labRegistry'));
+                const querySnapshot = await window.getDocs(q);
+                let existingUser = null;
+                querySnapshot.forEach((doc) => {
+                    if (doc.data().name === name) {
+                        existingUser = { id: doc.id, ...doc.data() };
+                    }
+                });
+                if (existingUser) {
+                    localStorage.setItem('pl_user', name);
+                    localStorage.setItem('pl_user_doc_id', existingUser.id);
+                    currentUserName = name;
+                    currentUserDocId = existingUser.id;
+                    document.getElementById('reg-message').innerText = `Welcome back! 🌿`;
+                } else {
+                    const docRef = await window.addDoc(
+                        window.collection(window.db, 'labRegistry'),
+                        { name: name, email: email, xp: xp, joinedAt: new Date().toISOString() }
+                    );
+                    localStorage.setItem('pl_user', name);
+                    localStorage.setItem('pl_user_doc_id', docRef.id);
+                    currentUserName = name;
+                    currentUserDocId = docRef.id;
+                    document.getElementById('reg-message').innerText = `Welcome! ✨`;
+                }
+                setTimeout(() => {
+                    document.getElementById('reg-name').value = '';
+                    document.getElementById('reg-email').value = '';
+                    document.getElementById('reg-message').innerText = '';
+                }, 2000);
+            } catch (error) {
+                console.error('Registration error:', error);
+                document.getElementById('reg-message').innerText = 'Error. Try again.';
+            }
+        }
+
+        function showPage(p, el) {
+    // 1. Manage Lab-specific layout classes
+    document.body.classList.remove('on-lab-page');
+    if (p === 'lab') document.body.classList.add('on-lab-page');
+
+    // 2. Hide all pages and show the target one
+    document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
+    const targetPage = document.getElementById('page-' + p);
+    if (targetPage) targetPage.classList.remove('hidden');
+
+    // 3. Update Navigation Active State (The Fix)
+    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('nav-active'));
+    
+    if (el) {
+        // If we clicked a nav button directly
+        el.classList.add('nav-active');
+    } else {
+        // If we clicked the logo, find the 'Home' button and highlight it
+        const homeBtn = document.querySelector(`[onclick*="showPage('intro'"]`);
+        if (homeBtn) homeBtn.classList.add('nav-active');
+    }
+
+    // 4. Trigger Page-Specific Renders
+    if (p === 'intro') updateIntro();
+    if (p === 'store') renderStore();
+    if (p === 'vault') renderVault('Alocasia');
+    if (p === 'care') renderCareProducts();
+    if (p === 'lab') startLab();
+}
+
+
+        function updateIntro(){ document.getElementById('intro-content').innerHTML = intros[lang]; }
+
+        function filterStore() {
+            currentFilter = document.getElementById('store-filter-select').value;
+            renderStore();
+        }
+
+        function isAlocasia(name) {
+            return name.toLowerCase().includes('alocasia');
+        }
+
+        function renderStore(){
+            let filteredItems = ALL_STORE_ITEMS;
+            if (currentFilter === 'available') {
+                filteredItems = ALL_STORE_ITEMS.filter(item => item.status === 'available');
+            } else if (currentFilter === 'coming') {
+                filteredItems = ALL_STORE_ITEMS.filter(item => item.status === 'coming');
+            }
+            
+            const ang = 360 / filteredItems.length; 
+            let h = `<div class="carousel-container"><div class="carousel-wheel" id="wheel">`;
+            
+            filteredItems.forEach((item, i)=>{ 
+                const isAvailable = item.status === "available";
+                const badge = isAvailable ? 
+                    '<span class="availability-badge badge-available">Available</span>' : 
+                    '<span class="availability-badge badge-coming-soon">Coming Soon</span>';
+                
+                let dropdownHTML = '';
+                if (isAvailable && item.availability) {
+                    const allOptions = ["Tissue Culture", "Starter Plant", "Mature Plant"];
+                    if (isAlocasia(item.name)) allOptions.push("Corm");
+                    
+                    dropdownHTML = '<div class="availability-dropdown"><select class="availability-select"><option value="">Select Availability</option>';
+                    allOptions.forEach(opt => {
+                        const isOptAvailable = item.availability.includes(opt);
+                        dropdownHTML += isOptAvailable ? 
+                            `<option value="${opt}">${opt}</option>` : 
+                            `<option disabled>${opt} (Unavailable)</option>`;
+                    });
+                    dropdownHTML += '</select></div>';
+                }
+                
+                const btnHTML = isAvailable ? 
+                    '<button class="btn" onclick="window.open(\'https://wa.me/972559116990\')">INQUIRE</button>' : 
+                    '<button class="btn" style="opacity: 0.5; cursor: not-allowed;" disabled>COMING SOON</button>';
+                
+                h += `
+                <div class="store-card ${i===0?'card-focus':''}" style="transform:rotateY(${i*ang}deg) translateZ(280px)">
+                    ${badge}
+                    <div class="portal"><img src="plants/${item.id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'" style="opacity: ${isAvailable ? '1' : '0.6'}"></div>
+                    <p class="serif text-[11px] font-bold text-center mb-4">${item.name}</p>
+                    ${dropdownHTML}
+                    <div class="w-full space-y-2 mb-6">
+                        <div class="stat-row"><span>☀️ Light</span><span>${item.light}</span></div>
+                        <div class="stat-row"><span>💧 Humidity</span><span>${item.humidity}</span></div>
+                    </div>
+                    ${btnHTML}
+                </div>`;
+            });
+            
+            h += '</div></div>';
+            document.getElementById('store-grid').innerHTML = h;
+            window.sLen = filteredItems.length; 
+            window.sAng = ang; 
+            rot = 0;
+        }
+
+        function spin(d){ 
+            rot += d * window.sAng; 
+            const wheel = document.getElementById('wheel');
+            if(wheel) wheel.style.transform = `rotateY(${rot}deg)`; 
+            const cards = document.querySelectorAll('.store-card'); 
+            const act = (Math.round(-rot/window.sAng) % window.sLen + window.sLen) % window.sLen; 
+            cards.forEach((c,i) => c.classList.toggle('card-focus', i === act));
+        }
+
+        function renderVault(f){ 
+    let h = ""; 
+    Object.keys(MASTER_DB).forEach(id => {
+        if(MASTER_DB[id].family === f){ 
+            h += `<div class="vault-item"><div class="portal mx-auto w-full mb-2"><img src="plants/${id}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div><p class="vault-name px-2">${MASTER_DB[id].name}</p></div>`;
+        }
+    });
+    document.getElementById('vault-grid').innerHTML = h;
+}
+
+
+        function renderCareProducts() {
+            let html = "";
+            Object.keys(SUBSTRATE_DB).forEach(key => {
+                const item = SUBSTRATE_DB[key];
+                let priceRows = "";
+                Object.entries(item.prices).forEach(([size, price]) => {
+                    const label = size === 'l10' ? '10 Liter' : (size === 'l2' ? '2 Liter' : '1 Liter');
+                    priceRows += `<div class="flex justify-between items-center border-b border-[var(--border)] py-1"><span>${label}</span><span class="font-bold text-[var(--pink)]">${price}₪</span></div>`;
+                });
+                html += `<div class="care-product-card"><div class="portal mx-auto w-32 h-32 mb-4"><img src="${item.img}" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div><h3 class="serif text-[12px] tracking-[2px] text-center mb-3">${item.name}</h3><p class="text-[9px] leading-relaxed opacity-70 mb-4 text-right" dir="rtl">${item.desc}</p><div class="text-[8px] space-y-1">${priceRows}</div><button class="btn mt-4" onclick="window.open('https://wa.me/972559116990')">הזמן</button></div>`;
+            });
+            document.getElementById('care-products-grid').innerHTML = html;
+        }
+
+        function getFamily(id) {
+            const n = parseInt(id.replace('PV', ''));
+            if ((n >= 14 && n <= 45) || (n >= 73 && n <= 84)) return "Alocasia";
+            if (n >= 46 && n <= 67) return "Philodendron";
+            if (n >= 5 && n <= 12) return "Monstera";
+            return "Rare Collection";
+        }
+
+        function startLab(){
+    const keys = Object.keys(MASTER_DB);
+    const qId = keys[Math.floor(Math.random() * keys.length)];
+    const plant = MASTER_DB[qId];
+
+    let familyPool = keys.filter(k => MASTER_DB[k].family === plant.family && k !== qId);
+    if (familyPool.length < 3) familyPool = keys.filter(k => k !== qId);
+
+    let choices = [plant.name];
+    while (choices.length < 4) {
+        let rId = familyPool[Math.floor(Math.random() * familyPool.length)];
+        let rName = MASTER_DB[rId].name;
+        if (!choices.includes(rName)) choices.push(rName);
+    }
+    
+    choices.sort(() => Math.random() - 0.5);
+    currentQuestion = { id: qId, correctAnswer: plant.name };
+    
+    document.getElementById('lab-box').innerHTML = `
+        <p class="serif text-[10px] tracking-[4px] opacity-40 mb-2">${plant.family.toUpperCase()}</p>
+        <p class="serif text-[10px] tracking-[4px] opacity-40 mb-4">XP: ${xp} | STREAK: ${streak}/5</p>
+        <div class="portal mx-auto mb-10 w-52 h-52"><img src="plants/${qId}.jpg" class="w-full h-full object-cover" onerror="this.src='logo-dark.png'"></div>
+        <div class="flex flex-col gap-5">
+            ${choices.map((c, idx) => `<button class="btn" onclick="checkLab(${idx})">${c}</button>`).join('')}
+        </div>`;
+}
+
+
+        let isProcessing = false; // Add this line above the function
+
+function checkLab(choiceIndex) {
+    if (isProcessing) return; // This kills the "Sticky" bug
+    isProcessing = true;
+
+    const buttons = document.querySelectorAll('#lab-box .btn');
+    const selectedAnswer = buttons[choiceIndex].textContent;
+    const correctAnswer = currentQuestion.correctAnswer;
+    const correctId = currentQuestion.id;
+    
+    const fb = document.getElementById('lab-feedback'); 
+    if (selectedAnswer === correctAnswer) { 
+        streak++; 
+        xp += 10; 
+        fb.innerHTML = "✅"; 
+        fb.style.opacity = "1"; 
+        
+        if (streak === 5) {
+            confetti(); 
+            streak = 0; 
+            xp += 100;
+        } 
+        
+        updateXPDisplay();
+        setTimeout(() => { 
+            fb.style.opacity = "0"; 
+            isProcessing = false; // Releases the lock for the next plant
+            startLab(); 
+        }, 800); 
+    } else { 
+        streak = 0;
+        fb.innerHTML = "❌"; 
+        fb.style.opacity = "1"; 
+        setTimeout(() => { 
+            fb.style.opacity = "0"; 
+            document.getElementById('correct-img').src = `plants/${correctId}.jpg`; 
+            document.getElementById('correct-name').innerText = correctAnswer; 
+            document.getElementById('lab-correction').style.display = 'flex'; 
+            isProcessing = false; // Releases the lock
+        }, 800); 
+    } 
+}
+
+
+        function closeCorrection(){ document.getElementById('lab-correction').style.display='none'; startLab(); }
+
+        function toggleTheme(){ 
+            const d = document.body.classList.toggle('dark-mode'); 
+            document.getElementById('theme-btn').innerText = d ? "🌙" : "☀️"; 
+            document.getElementById('main-logo').src = d ? "logo-light.png" : "logo-dark.png"; 
+        }
+
+        function toggleLang(){ 
+            lang = lang === 'he' ? 'en' : 'he'; 
+            document.dir = lang === 'he' ? 'rtl' : 'ltr'; 
+            updateIntro(); 
+            document.querySelectorAll('.nav-link').forEach(n => {
+                const label = n.getAttribute('data-' + lang);
+                if(label) n.innerText = label;
+            });
+            if(!document.getElementById('page-care').classList.contains('hidden')) renderCareProducts();
+        }
+
+        function adjFont(v){ 
+            const curr = parseFloat(getComputedStyle(document.body).fontSize);
+            document.body.style.fontSize = (curr + v) + "px";
+        }
+
+        window.onload = () => {
+            updateIntro(); 
+            showPage('intro');
+            updateXPDisplay();
+        };
+    </script>
+</body>
+</html>
