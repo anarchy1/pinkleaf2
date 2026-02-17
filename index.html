@@ -33,6 +33,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Initialize Scoreboard with loading state instead of error
+    const scoreboardList = document.getElementById('scoreboard-list');
+    if (scoreboardList) {
+        scoreboardList.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 10px; font-size: 8px;">Synchronizing...</div>';
+    }
+
     onSnapshot(query(collection(db, 'labRegistry'), orderBy('xp', 'desc')), (snapshot) => {
         const list = document.getElementById('scoreboard-list');
         if (!list) return;
